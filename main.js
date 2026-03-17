@@ -66,6 +66,40 @@ generateBtn.addEventListener('click', () => {
     }
 });
 
+// 제휴 문의 폼
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
+
+contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '전송 중...';
+    formStatus.className = 'form-status';
+    formStatus.textContent = '';
+
+    try {
+        const res = await fetch(contactForm.action, {
+            method: 'POST',
+            body: new FormData(contactForm),
+            headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+            formStatus.classList.add('success');
+            formStatus.textContent = '✅ 문의가 성공적으로 전송되었습니다. 감사합니다!';
+            contactForm.reset();
+        } else {
+            throw new Error();
+        }
+    } catch {
+        formStatus.classList.add('error');
+        formStatus.textContent = '❌ 전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '문의 보내기';
+    }
+});
+
 // 저녁 메뉴 추천
 const menus = [
     { name: '삼겹살', desc: '상추에 싸먹는 국민 회식 메뉴' },

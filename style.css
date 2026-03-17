@@ -186,6 +186,80 @@ body.dark button:hover {
     background-color: #1a5276;
 }
 
+/* 제휴 문의 폼 */
+.form-desc {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1.2rem;
+}
+
+body.dark .form-desc {
+    color: #aaa;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #444;
+}
+
+body.dark .form-group label {
+    color: #ccc;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s, background-color 0.3s, color 0.3s;
+    background-color: #fff;
+    color: #222;
+    font-family: sans-serif;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #3498db;
+}
+
+body.dark .form-group input,
+body.dark .form-group textarea {
+    background-color: #0f3460;
+    color: #e0e0e0;
+    border-color: #1a5276;
+}
+
+body.dark .form-group input::placeholder,
+body.dark .form-group textarea::placeholder {
+    color: #7f8c8d;
+}
+
+.form-status {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    min-height: 1.2rem;
+}
+
+.form-status.success {
+    color: #27ae60;
+}
+
+.form-status.error {
+    color: #e74c3c;
+}
+
 .theme-toggle {
     position: fixed;
     top: 1rem;
