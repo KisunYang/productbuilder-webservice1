@@ -15,15 +15,25 @@ if (localStorage.getItem('theme') === 'dark') {
 // 로또 번호 생성 (5세트)
 const generateBtn = document.getElementById('generate');
 const lottoSets = document.getElementById('lotto-sets');
+const bonusCheck = document.getElementById('bonus-check');
 
 generateBtn.addEventListener('click', () => {
     lottoSets.innerHTML = '';
+    const includeBonus = bonusCheck.checked;
+
     for (let set = 1; set <= 5; set++) {
         const numbers = new Set();
         while (numbers.size < 6) {
             numbers.add(Math.floor(Math.random() * 45) + 1);
         }
         const sorted = Array.from(numbers).sort((a, b) => a - b);
+
+        let bonus = null;
+        if (includeBonus) {
+            do {
+                bonus = Math.floor(Math.random() * 45) + 1;
+            } while (numbers.has(bonus));
+        }
 
         const row = document.createElement('div');
         row.classList.add('lotto-row');
@@ -39,6 +49,18 @@ generateBtn.addEventListener('click', () => {
             ball.textContent = n;
             row.appendChild(ball);
         });
+
+        if (includeBonus) {
+            const sep = document.createElement('span');
+            sep.classList.add('bonus-label');
+            sep.textContent = '+';
+            row.appendChild(sep);
+
+            const bonusBall = document.createElement('div');
+            bonusBall.classList.add('number', 'bonus');
+            bonusBall.textContent = bonus;
+            row.appendChild(bonusBall);
+        }
 
         lottoSets.appendChild(row);
     }

@@ -88,6 +88,47 @@ body.dark .number {
     color: #e0e0e0;
 }
 
+.bonus-option {
+    margin: 0.8rem 0 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+body.dark .bonus-option {
+    color: #ccc;
+}
+
+.bonus-option label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.number.bonus {
+    background-color: #e74c3c;
+    color: white;
+    position: relative;
+}
+
+body.dark .number.bonus {
+    background-color: #c0392b;
+    color: white;
+}
+
+.bonus-label {
+    font-size: 0.7rem;
+    color: #e74c3c;
+    font-weight: bold;
+    margin: 0 0.2rem;
+    align-self: center;
+}
+
+body.dark .bonus-label {
+    color: #ff6b6b;
+}
+
 /* 메뉴 추천 */
 .menu-result {
     margin: 1rem 0;
