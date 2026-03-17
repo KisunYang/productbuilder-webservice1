@@ -5,6 +5,12 @@ body {
     align-items: center;
     min-height: 100vh;
     background-color: #f0f0f0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
 }
 
 .container {
@@ -13,6 +19,16 @@ body {
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+body.dark .container {
+    background-color: #16213e;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark h1 {
+    color: #e0e0e0;
 }
 
 .numbers {
@@ -32,6 +48,12 @@ body {
     align-items: center;
     font-size: 1.2rem;
     font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark .number {
+    background-color: #0f3460;
+    color: #e0e0e0;
 }
 
 .controls {
@@ -42,4 +64,24 @@ button {
     padding: 0.5rem 1rem;
     font-size: 1rem;
     cursor: pointer;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 100;
+}
+
+body.dark .theme-toggle {
+    background-color: #e0e0e0;
+    color: #1a1a2e;
 }
