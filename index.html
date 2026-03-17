@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +8,23 @@
 </head>
 <body>
     <button id="theme-toggle" class="theme-toggle">🌙 Dark Mode</button>
-    <div class="container">
-        <h1>Lotto Number Generator</h1>
-        <div id="numbers" class="numbers"></div>
-        <div class="controls">
-            <button id="generate">Generate</button>
+    <div class="page-wrapper">
+        <!-- 로또 섹션 -->
+        <div class="container">
+            <h1>🎱 로또 번호 생성기</h1>
+            <div id="lotto-sets"></div>
+            <div class="controls">
+                <button id="generate">번호 생성</button>
+            </div>
+        </div>
+
+        <!-- 저녁 메뉴 섹션 -->
+        <div class="container">
+            <h1>🍽️ 오늘 저녁 뭐 먹지?</h1>
+            <div id="menu-result" class="menu-result"></div>
+            <div class="controls">
+                <button id="recommend">메뉴 추천받기</button>
+            </div>
         </div>
     </div>
     <script src="main.js"></script>
