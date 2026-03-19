@@ -129,6 +129,39 @@ body.dark .bonus-label {
     color: #ff6b6b;
 }
 
+/* 국가 체크박스 */
+.country-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.8rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.country-checkboxes label {
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #555;
+}
+
+body.dark .country-checkboxes label {
+    color: #ccc;
+}
+
+.menu-country {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+body.dark .menu-country {
+    color: #aaa;
+}
+
 /* 메뉴 추천 */
 .menu-result {
     margin: 1rem 0;
