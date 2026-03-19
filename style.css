@@ -280,6 +280,25 @@ body.dark .theme-toggle {
     color: #1a1a2e;
 }
 
+/* 블롭 오페라 */
+.blob-opera-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 75%;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.blob-opera-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
 /* 댓글 탭 */
 .comment-tabs {
     display: flex;
