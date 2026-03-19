@@ -280,6 +280,14 @@ body.dark .theme-toggle {
     color: #1a1a2e;
 }
 
+/* Arts & Culture 버튼 그룹 */
+.arts-btns {
+    display: flex;
+    gap: 0.7rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 /* 댓글 탭 */
 .comment-tabs {
     display: flex;
