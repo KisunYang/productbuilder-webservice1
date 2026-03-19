@@ -58,10 +58,40 @@
         <!-- 댓글 섹션 -->
         <div class="container">
             <h1>💬 댓글</h1>
-            <livere-comment client-id="cJ4S4rWPXteyHJUcmcD8"></livere-comment>
+            <div class="comment-tabs">
+                <button class="comment-tab active" data-tab="livere">라이브리 댓글</button>
+                <button class="comment-tab" data-tab="disqus">디스커스 댓글</button>
+            </div>
+            <div id="comment-livere" class="comment-panel active">
+                <livere-comment client-id="cJ4S4rWPXteyHJUcmcD8"></livere-comment>
+            </div>
+            <div id="comment-disqus" class="comment-panel">
+                <div id="disqus_thread"></div>
+            </div>
         </div>
     </div>
     <script src="main.js"></script>
     <script type="module" src="https://www.livere.org/livere-widget.js"></script>
+    <script>
+        (function() {
+            var disqusLoaded = false;
+            document.querySelectorAll('.comment-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.comment-tab').forEach(function(t) { t.classList.remove('active'); });
+                    document.querySelectorAll('.comment-panel').forEach(function(p) { p.classList.remove('active'); });
+                    tab.classList.add('active');
+                    document.getElementById('comment-' + tab.dataset.tab).classList.add('active');
+
+                    if (tab.dataset.tab === 'disqus' && !disqusLoaded) {
+                        disqusLoaded = true;
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://YOUR_DISQUS_SHORTNAME.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    }
+                });
+            });
+        })();
+    </script>
 </body>
 </html>

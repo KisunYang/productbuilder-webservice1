@@ -279,3 +279,47 @@ body.dark .theme-toggle {
     background-color: #e0e0e0;
     color: #1a1a2e;
 }
+
+/* 댓글 탭 */
+.comment-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+    justify-content: center;
+}
+
+.comment-tab {
+    background-color: #ddd;
+    color: #555;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    padding: 0.4rem 1.1rem;
+}
+
+.comment-tab.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.comment-tab:hover:not(.active) {
+    background-color: #bbb;
+}
+
+body.dark .comment-tab {
+    background-color: #0f3460;
+    color: #aaa;
+}
+
+body.dark .comment-tab.active {
+    background-color: #1a5276;
+    color: white;
+}
+
+.comment-panel {
+    display: none;
+    text-align: left;
+}
+
+.comment-panel.active {
+    display: block;
+}
