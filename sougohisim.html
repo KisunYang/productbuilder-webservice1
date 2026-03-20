@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소유의 호기심</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #2d3748;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
+        header a:hover { opacity: 1; }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 좌측 사이드바 */
+        .sidebar {
+            width: 240px;
+            min-width: 200px;
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+        .sidebar-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a0aec0;
+            padding: 0 16px 8px;
+        }
+
+        .subject-group {
+            margin-bottom: 4px;
+        }
+
+        .subject-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #4a5568;
+            transition: background 0.15s;
+            user-select: none;
+        }
+        .subject-header:hover { background: #f7fafc; }
+
+        .subject-header .icon { font-size: 1.1rem; }
+
+        .subject-header .arrow {
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: #a0aec0;
+            transition: transform 0.2s;
+        }
+        .subject-group.open .arrow { transform: rotate(90deg); }
+
+        .topic-list {
+            display: none;
+            padding-left: 0;
+        }
+        .subject-group.open .topic-list { display: block; }
+
+        .topic-item {
+            display: block;
+            padding: 8px 16px 8px 40px;
+            font-size: 0.88rem;
+            color: #718096;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+        }
+        .topic-item:hover { background: #ebf4ff; color: #3182ce; }
+        .topic-item.active {
+            background: #ebf4ff;
+            color: #2b6cb0;
+            border-left-color: #3182ce;
+            font-weight: 600;
+        }
+
+        /* 우측 콘텐츠 영역 */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+        .breadcrumb span { color: #a0aec0; margin: 0 6px; }
+        .breadcrumb strong { color: #2d3748; }
+
+        .content-frame-wrap {
+            flex: 1;
+            background: white;
+            overflow: hidden;
+        }
+
+        #content-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #a0aec0;
+            text-align: center;
+            gap: 12px;
+        }
+        .welcome-screen .big-icon { font-size: 4rem; }
+        .welcome-screen h2 { font-size: 1.2rem; color: #718096; font-weight: 600; }
+        .welcome-screen p { font-size: 0.9rem; }
+
+        /* 스크롤바 스타일 */
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html">← 홈으로</a>
+    <h1>🔭 소유의 호기심</h1>
+</header>
+
+<div class="main-layout">
+
+    <!-- 좌측: 과목 카테고리 -->
+    <nav class="sidebar">
+        <div class="sidebar-title">중학교 교과목</div>
+
+        <!-- 과학 -->
+        <div class="subject-group open" id="group-science">
+            <div class="subject-header" onclick="toggleGroup('group-science')">
+                <span class="icon">🔬</span> 과학
+                <span class="arrow">▶</span>
+            </div>
+            <div class="topic-list">
+                <a class="topic-item" href="#" data-src="souhogisim/science-1-solubility.html" data-subject="과학" data-topic="용해도">용해도</a>
+            </div>
+        </div>
+
+        <!-- 수학 -->
+        <div class="subject-group" id="group-math">
+            <div class="subject-header" onclick="toggleGroup('group-math')">
+                <span class="icon">📐</span> 수학
+                <span class="arrow">▶</span>
+            </div>
+            <div class="topic-list">
+                <a class="topic-item coming-soon" href="#" data-subject="수학" data-topic="방정식">방정식 (준비 중)</a>
+                <a class="topic-item coming-soon" href="#" data-subject="수학" data-topic="함수">함수 (준비 중)</a>
+            </div>
+        </div>
+
+        <!-- 국어 -->
+        <div class="subject-group" id="group-korean">
+            <div class="subject-header" onclick="toggleGroup('group-korean')">
+                <span class="icon">📖</span> 국어
+                <span class="arrow">▶</span>
+            </div>
+            <div class="topic-list">
+                <a class="topic-item coming-soon" href="#" data-subject="국어" data-topic="문학">문학 (준비 중)</a>
+                <a class="topic-item coming-soon" href="#" data-subject="국어" data-topic="문법">문법 (준비 중)</a>
+            </div>
+        </div>
+
+        <!-- 영어 -->
+        <div class="subject-group" id="group-english">
+            <div class="subject-header" onclick="toggleGroup('group-english')">
+                <span class="icon">🌏</span> 영어
+                <span class="arrow">▶</span>
+            </div>
+            <div class="topic-list">
+                <a class="topic-item coming-soon" href="#" data-subject="영어" data-topic="문법">문법 (준비 중)</a>
+            </div>
+        </div>
+
+        <!-- 사회 -->
+        <div class="subject-group" id="group-social">
+            <div class="subject-header" onclick="toggleGroup('group-social')">
+                <span class="icon">🗺️</span> 사회
+                <span class="arrow">▶</span>
+            </div>
+            <div class="topic-list">
+                <a class="topic-item coming-soon" href="#" data-subject="사회" data-topic="지리">지리 (준비 중)</a>
+            </div>
+        </div>
+
+        <!-- 역사 -->
+        <div class="subject-group" id="group-history">
+            <div class="subject-header" onclick="toggleGroup('group-history')">
+                <span class="icon">🏛️</span> 역사
+                <span class="arrow">▶</span>
+            </div>
+            <div class="topic-list">
+                <a class="topic-item coming-soon" href="#" data-subject="역사" data-topic="근현대사">근현대사 (준비 중)</a>
+            </div>
+        </div>
+
+    </nav>
+
+    <!-- 우측: 콘텐츠 -->
+    <div class="content-area">
+        <div class="content-header" id="breadcrumb-bar" style="display:none">
+            <div class="breadcrumb">
+                <span id="bc-subject"></span>
+                <span>›</span>
+                <strong id="bc-topic"></strong>
+            </div>
+        </div>
+
+        <div class="content-frame-wrap">
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="big-icon">🔭</div>
+                <h2>학습할 주제를 선택하세요</h2>
+                <p>왼쪽 메뉴에서 과목과 단원을 클릭하면<br>학습 내용이 여기에 표시됩니다.</p>
+            </div>
+            <iframe id="content-iframe" style="display:none" title="학습 콘텐츠"></iframe>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function toggleGroup(id) {
+        const group = document.getElementById(id);
+        group.classList.toggle('open');
+    }
+
+    document.querySelectorAll('.topic-item:not(.coming-soon)').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const src = this.dataset.src;
+            const subject = this.dataset.subject;
+            const topic = this.dataset.topic;
+
+            // 활성 표시
+            document.querySelectorAll('.topic-item').forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+
+            // 브레드크럼
+            document.getElementById('bc-subject').textContent = subject;
+            document.getElementById('bc-topic').textContent = topic;
+            document.getElementById('breadcrumb-bar').style.display = 'flex';
+
+            // iframe 로드
+            const iframe = document.getElementById('content-iframe');
+            const welcome = document.getElementById('welcome-screen');
+            iframe.src = src;
+            iframe.style.display = 'block';
+            welcome.style.display = 'none';
+        });
+    });
+
+    document.querySelectorAll('.topic-item.coming-soon').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+        });
+    });
+</script>
+
+</body>
+</html>

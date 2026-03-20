@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 Solubility Explorer - Middle School Science Visualization</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { font-family: 'Montserrat', 'Segoe UI', 'Roboto', 'Open Sans', sans-serif; background-color: #f9fafb; color: #1f2937; }
+    #root { width: 100%; }
+    input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #3b82f6 0%, #10b981 50%, #ef4444 100%); outline: none; cursor: pointer; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: white; border: 3px solid #3b82f6; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: white; border: 3px solid #3b82f6; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    input[type="range"]::-moz-range-track { background: transparent; border: 0; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // 다국어 텍스트
+    const TRANSLATIONS = {
+      ko: {
+        title: '🧪 용해도 탐험실',
+        subtitle: '물에 설탕을 녹이며 용해도의 원리를 알아보세요!',
+        stage1: '1단계: 실제 현상',
+        stage2: '2단계: 용해도란?',
+        stage3: '3단계: 직접 실험해보기',
+        definition: '📖 정의',
+        cause: '🌡️ 원인',
+        condition: '💧 조건',
+        result: '✅ 결과',
+        controlPanel: '⚙️ 조작 패널',
+        temperature: '🌡️ 온도',
+        waterAmount: '💧 물의 양',
+        currentStatus: '📊 현재 상태',
+        maxSolubility: '최대 용해도',
+        dissolvedSugar: '녹은 설탕',
+        saturation: '포화도',
+        stackedSugar: '바닥 쌓인 설탕',
+        addSugar: '🍬 설탕 10g 추가',
+        reset: '🔄 초기화',
+        cupSimulation: '🥤 물컵 시뮬레이션',
+        solubilityChart: '📈 온도별 용해도 (물의 양별)',
+        currentState: '현재 온도 (°C)에서의 설탕 상태',
+        maxLabel: '최대',
+        dissolvedLabel: '녹은 설탕',
+        canDissolveLabel: '더 녹을 수 있는 양',
+        stackedLabel: '바닥에 쌓인 설탕',
+        noStackedLabel: '바닥에 쌓인 설탕: 없음',
+        happening: '💡 지금 일어나는 일',
+        learning: '📚 과학 용어 학습',
+        englishSection: '🌍 과학 영어 (Science English)',
+        hanjaSection: '🇨🇳 과학 한자 (Science Chinese Characters)',
+        meaning: '뜻',
+        example: '예제',
+        listen: '🔊 듣기',
+        radical: '📌 부수 (뜻)',
+        phonetic: '🔊 소리 (음)',
+        combined: '✨ 합쳐진 뜻',
+        example2: '예',
+        summary: '🎯 핵심 정리',
+        experimentInfo: '이게 뭔가요?',
+        experimentDesc: '설탕을 물에 넣으면 처음엔 녹아서 보이지 않습니다. 하지만 계속 넣으면 어느 순간부터 더 이상 녹지 않고 바닥에 가라앉기 시작합니다. 왜 이런 일이 일어날까요?',
+        video: '🎬 설탕이 물에 녹는 실험 영상',
+        solubilityDef: '용해도는 특정 온도에서 일정량의 물(보통 100g)에 최대로 녹을 수 있는 설탕의 양(g)을 나타냅니다.',
+        temperature20: '예: 20°C일 때, 물 100g에 설탕은 최대 204g까지 녹을 수 있습니다.',
+        moleculeMotion: '물을 이루는 분자들은 항상 움직이고 있습니다. 온도가 높아지면 물의 분자가 더 빠르게 움직입니다. 빠르게 움직이는 물의 분자들은 설탕의 입자들을 더 잘 감싸고 떨어뜨릴 수 있습니다.',
+        waterAmount2: '물의 양이 많아지면 더 많은 설탕을 녹일 수 있습니다. 물 100g에 설탕을 녹일 수 있는 양이 정해져 있다면, 물 200g에는 그 두 배를 녹일 수 있다는 뜻입니다.',
+        saturated: '더 이상 설탕이 녹지 않고 바닥에 가라앉는 상태를 포화 상태라고 합니다. 이 상태에서는 물의 분자들이 더 이상 설탕의 입자를 감쌀 수 없게 됩니다.',
+        keySummary: '용해도는 특정 온도에서 물 100g에 녹을 수 있는 최대 설탕의 양입니다. 온도가 높아지면 용해도도 높아집니다. 물의 양이 2배면 녹을 수 있는 설탕도 2배입니다. 더 이상 설탕이 녹지 않는 상태가 포화 상태입니다.',
+        version: '용해도 탐험실 V7-3 (다국어 지원)'
+      },
+      en: {
+        title: '🧪 Solubility Explorer',
+        subtitle: 'Understand the principle of solubility by dissolving sugar in water!',
+        stage1: 'Stage 1: Real Phenomenon',
+        stage2: 'Stage 2: What is Solubility?',
+        stage3: 'Stage 3: Hands-on Experiment',
+        definition: '📖 Definition',
+        cause: '🌡️ Cause',
+        condition: '💧 Condition',
+        result: '✅ Result',
+        controlPanel: '⚙️ Control Panel',
+        temperature: '🌡️ Temperature',
+        waterAmount: '💧 Amount of Water',
+        currentStatus: '📊 Current Status',
+        maxSolubility: 'Maximum Solubility',
+        dissolvedSugar: 'Dissolved Sugar',
+        saturation: 'Saturation',
+        stackedSugar: 'Sugar Stacked',
+        addSugar: '🍬 Add 10g Sugar',
+        reset: '🔄 Reset',
+        cupSimulation: '🥤 Water Cup Simulation',
+        solubilityChart: '📈 Solubility by Temperature (by Water Amount)',
+        currentState: 'Sugar State at Current Temperature (°C)',
+        maxLabel: 'Max',
+        dissolvedLabel: 'Dissolved Sugar',
+        canDissolveLabel: 'Can Dissolve More',
+        stackedLabel: 'Sugar Stacked',
+        noStackedLabel: 'No Sugar Stacked',
+        happening: '💡 What\'s Happening Now',
+        learning: '📚 Science Vocabulary',
+        englishSection: '🌍 Science English',
+        hanjaSection: '🇨🇳 Science Chinese Characters',
+        meaning: 'Meaning',
+        example: 'Example',
+        listen: '🔊 Listen',
+        radical: '📌 Radical (Meaning)',
+        phonetic: '🔊 Phonetic (Sound)',
+        combined: '✨ Combined Meaning',
+        example2: 'Ex',
+        summary: '🎯 Key Summary',
+        experimentInfo: 'What is this?',
+        experimentDesc: 'When you put sugar in water, it dissolves and disappears at first. But if you keep adding sugar, eventually it stops dissolving and settles at the bottom. Why does this happen?',
+        video: '🎬 Experiment Video: Sugar Dissolving in Water',
+        solubilityDef: 'Solubility is the maximum amount (in grams) of sugar that can dissolve in a specific amount of water (usually 100g) at a certain temperature.',
+        temperature20: 'Example: At 20°C, up to 204g of sugar can dissolve in 100g of water.',
+        moleculeMotion: 'Water molecules are always moving. As temperature increases, water molecules move faster. Faster-moving water molecules can better wrap around and separate sugar particles, allowing more sugar to dissolve.',
+        waterAmount2: 'If the amount of water increases, more sugar can dissolve. If there\'s a maximum amount of sugar that can dissolve in 100g of water, then 200g of water can dissolve twice as much.',
+        saturated: 'A saturated state is when no more sugar can dissolve and it starts to settle at the bottom. In this state, the water molecules can no longer wrap around the sugar particles.',
+        keySummary: 'Solubility is the maximum amount of sugar that can dissolve in 100g of water at a certain temperature. As temperature increases, solubility also increases. If water amount doubles, dissolvable sugar also doubles. A saturated state is when no more sugar can dissolve.',
+        version: 'Solubility Explorer V7-3 (Multilingual Support)'
+      }
+    };
+
+    // 그래프 컴포넌트
+    const AdvancedSolubilityChart = ({ temperature, waterAmount, dissolvedAmount, maxDissolvedAmount, language }) => {
+      const t = TRANSLATIONS[language];
+      const solubilityData = { 0: 179, 10: 190, 20: 204, 30: 219, 40: 238, 50: 260, 60: 287, 70: 320, 80: 362, 90: 428, 100: 487 };
+
+      const getSolubilityAtTemp = (temp, water) => {
+        const tempFloor = Math.floor(temp / 10) * 10;
+        const tempCeil = tempFloor + 10;
+        const currentSol = solubilityData[tempFloor] || 179;
+        const nextSol = solubilityData[tempCeil] || 487;
+        const ratio = (temp - tempFloor) / 10;
+        return (currentSol + (nextSol - currentSol) * ratio) * (water / 100);
+      };
+
+      const waterAmounts = [50, 100, 150, 200];
+      const tempRange = Array.from({ length: 101 }, (_, i) => i);
+      const currentSolubility = getSolubilityAtTemp(temperature, waterAmount);
+      const actualDissolved = Math.min(dissolvedAmount, maxDissolvedAmount);
+      const excessAmount = Math.max(0, dissolvedAmount - maxDissolvedAmount);
+
+      return (
+        <div style={{ width: '100%', height: '100%' }}>
+          <svg viewBox="0 0 600 450" style={{ width: '100%', height: '100%' }}>
+            <defs><linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#3b82f6" /><stop offset="100%" stopColor="#ef4444" /></linearGradient></defs>
+            {[0, 50, 100, 150, 200, 250, 300, 350, 400].map((y, i) => <line key={"h" + i} x1="60" y1={400 - y * 0.8} x2="550" y2={400 - y * 0.8} stroke="#e5e7eb" strokeDasharray="2,2" />)}
+            {Array.from({ length: 11 }, (_, i) => 60 + i * 49).map((x, i) => <line key={"v" + i} x1={x} y1="20" x2={x} y2="400" stroke="#e5e7eb" strokeDasharray="2,2" />)}
+            <line x1="60" y1="400" x2="550" y2="400" stroke="#1f2937" strokeWidth="2" />
+            <line x1="60" y1="20" x2="60" y2="400" stroke="#1f2937" strokeWidth="2" />
+            <text x="305" y="435" fontSize="13" fontWeight="bold" fill="#1f2937" textAnchor="middle">{language === 'ko' ? '온도 (°C)' : 'Temperature (°C)'}</text>
+            <text x="25" y="210" fontSize="13" fontWeight="bold" fill="#1f2937" textAnchor="middle" transform="rotate(-90 25 210)">{language === 'ko' ? '용해도 (g)' : 'Solubility (g)'}</text>
+            {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((temp, i) => <g key={"temp" + i}><text x={60 + i * 49} y="415" fontSize="11" fill="#6b7280" textAnchor="middle">{temp}</text></g>)}
+            {[0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500].map((sol, i) => <g key={"sol" + i}><text x="50" y={405 - sol * 0.8} fontSize="11" fill="#6b7280" textAnchor="end">{sol}</text></g>)}
+            {waterAmounts.map((water, waterIdx) => {
+              const isCurrentWater = water === waterAmount;
+              const opacity = isCurrentWater ? 1 : 0.2;
+              const strokeWidth = isCurrentWater ? 2.5 : 1.5;
+              const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+              const points = tempRange.map(temp => {
+                const sol = getSolubilityAtTemp(temp, water);
+                const x = 60 + (temp / 100) * 490;
+                const y = 400 - sol * 0.8;
+                return x + ',' + y;
+              }).join(' ');
+              return (
+                <g key={"water" + water}>
+                  <polyline points={points} fill="none" stroke={colors[waterIdx]} strokeWidth={strokeWidth} opacity={opacity} style={{ transition: 'opacity 0.3s ease, strokeWidth 0.3s ease' }} />
+                  {isCurrentWater && <text x="555" y={400 - getSolubilityAtTemp(100, water) * 0.8 + 4} fontSize="12" fontWeight="bold" fill={colors[waterIdx]}>{water}g</text>}
+                  {!isCurrentWater && <text x="555" y={400 - getSolubilityAtTemp(100, water) * 0.8 + 4} fontSize="10" fill={colors[waterIdx]} opacity="0.4">{water}g</text>}
+                </g>
+              );
+            })}
+            <line x1={60 + (temperature / 100) * 490} y1="400" x2={60 + (temperature / 100) * 490} y2={400 - currentSolubility * 0.8} stroke="#3b82f6" strokeWidth="2" strokeDasharray="5,5" opacity="0.8" />
+            <line x1="60" y1={400 - currentSolubility * 0.8} x2={60 + (temperature / 100) * 490} y2={400 - currentSolubility * 0.8} stroke="#3b82f6" strokeWidth="2" strokeDasharray="5,5" opacity="0.8" />
+            <circle cx={60 + (temperature / 100) * 490} cy={400 - currentSolubility * 0.8} r="5" fill="white" stroke="#3b82f6" strokeWidth="2" />
+            <rect x={60 + (temperature / 100) * 490 - 35} y={400 - currentSolubility * 0.8 - 25} width="70" height="20" fill="#3b82f6" rx="4" />
+            <text x={60 + (temperature / 100) * 490} y={400 - currentSolubility * 0.8 - 10} fontSize="12" fontWeight="bold" fill="white" textAnchor="middle">{currentSolubility.toFixed(1)}g</text>
+          </svg>
+
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <h4 style={{ fontSize: '0.95em', fontWeight: 'bold', marginBottom: '15px', color: '#1f2937' }}>{t.currentState.replace('(°C)', `(${temperature.toFixed(0)}°C)`)}</h4>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ width: '50px', height: '250px', backgroundColor: '#f0f0f0', border: '2px solid #d1d5db', borderRadius: '4px', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ position: 'absolute', bottom: '0', width: '100%', height: `${(actualDissolved / (maxDissolvedAmount + excessAmount * 0.5)) * 250}px`, backgroundColor: '#3b82f6', transition: 'height 0.3s ease' }} />
+                  <div style={{ position: 'absolute', bottom: `${(actualDissolved / (maxDissolvedAmount + excessAmount * 0.5)) * 250}px`, width: '100%', height: `${((maxDissolvedAmount - actualDissolved) / (maxDissolvedAmount + excessAmount * 0.5)) * 250}px`, backgroundColor: '#10b981', transition: 'height 0.3s ease' }} />
+                  {excessAmount > 0 && <div style={{ position: 'absolute', bottom: `${((actualDissolved + (maxDissolvedAmount - actualDissolved)) / (maxDissolvedAmount + excessAmount * 0.5)) * 250}px`, width: '100%', height: `${(excessAmount * 0.5 / (maxDissolvedAmount + excessAmount * 0.5)) * 250}px`, backgroundColor: '#9ca3af', transition: 'height 0.3s ease' }} />}
+                </div>
+                <div style={{ marginTop: '15px', fontSize: '0.85em', fontWeight: '600', color: '#374151' }}>{t.maxLabel}: {maxDissolvedAmount.toFixed(1)}g</div>
+              </div>
+              <div style={{ textAlign: 'left', fontSize: '0.9em', color: '#4b5563', lineHeight: '1.8' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}><div style={{ width: '20px', height: '20px', backgroundColor: '#3b82f6', borderRadius: '3px', marginRight: '10px' }} /><span><strong>{t.dissolvedLabel}:</strong> {actualDissolved.toFixed(1)}g</span></div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}><div style={{ width: '20px', height: '20px', backgroundColor: '#10b981', borderRadius: '3px', marginRight: '10px' }} /><span><strong>{t.canDissolveLabel}:</strong> {Math.max(0, maxDissolvedAmount - actualDissolved).toFixed(1)}g</span></div>
+                {excessAmount > 0 && <div style={{ display: 'flex', alignItems: 'center' }}><div style={{ width: '20px', height: '20px', backgroundColor: '#9ca3af', borderRadius: '3px', marginRight: '10px' }} /><span><strong>{t.stackedLabel}:</strong> {excessAmount.toFixed(1)}g</span></div>}
+                {excessAmount === 0 && <div style={{ display: 'flex', alignItems: 'center', color: '#9ca3af' }}><div style={{ width: '20px', height: '20px', backgroundColor: '#e5e7eb', borderRadius: '3px', marginRight: '10px' }} /><span>{t.noStackedLabel}</span></div>}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // 물컵 시뮬레이션
+    const WaterCupSimulation = ({ temperature, waterAmount, dissolvedAmount, maxDissolvedAmount, onSugarAddition }) => {
+      const canvasRef = useRef(null);
+      const particleRefs = useRef([]);
+      const cupWidth = 100, cupHeight = 180, cupX = 150, cupY = 40;
+      const waterHeightRatio = (waterAmount / 200) * 0.65;
+      const waterHeight = cupHeight * waterHeightRatio;
+      const saturatedAmount = Math.max(0, dissolvedAmount - maxDissolvedAmount);
+      const sugarBottomHeight = Math.min((saturatedAmount / (maxDissolvedAmount * 0.5)) * (cupHeight * 0.3), cupHeight * 0.3);
+      const flameCount = Math.floor(temperature / 20) + 1;
+      const flameIntensity = (temperature % 20) / 20;
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let animationId;
+        if (!particleRefs.current) particleRefs.current = [];
+
+        const animate = () => {
+          ctx.fillStyle = '#f9fafb';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          for (let i = 0; i < flameCount; i++) {
+            const flameX = cupX + cupWidth / 2 - (flameCount - 1) * 7.5 + i * 15;
+            const flameBaseY = cupY + cupHeight + 10;
+            const flameHeight = 15 + (flameIntensity + (Math.random() * 0.3 - 0.15)) * 10;
+            ctx.fillStyle = `rgba(${Math.floor(239 * (1 - flameIntensity * 0.3))}, ${Math.floor(68 * (1 - flameIntensity * 0.2))}, 68, 0.7)`;
+            ctx.beginPath();
+            ctx.moveTo(flameX - 4, flameBaseY);
+            ctx.quadraticCurveTo(flameX - 6, flameBaseY - flameHeight * 0.6, flameX, flameBaseY - flameHeight);
+            ctx.quadraticCurveTo(flameX + 6, flameBaseY - flameHeight * 0.6, flameX + 4, flameBaseY);
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          ctx.strokeStyle = '#8b7355';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(cupX, cupY);
+          ctx.lineTo(cupX, cupY + cupHeight);
+          ctx.lineTo(cupX + cupWidth, cupY + cupHeight);
+          ctx.lineTo(cupX + cupWidth, cupY);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(cupX + cupWidth + 18, cupY + cupHeight / 2, 12, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
+          ctx.fillRect(cupX, cupY + (cupHeight - waterHeight), cupWidth, waterHeight);
+          ctx.strokeStyle = 'rgba(59, 130, 246, 0.7)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(cupX, cupY + (cupHeight - waterHeight));
+          ctx.lineTo(cupX + cupWidth, cupY + (cupHeight - waterHeight));
+          ctx.stroke();
+
+          if (sugarBottomHeight > 0) {
+            ctx.fillStyle = 'rgba(240, 240, 240, 0.8)';
+            ctx.fillRect(cupX, cupY + cupHeight - sugarBottomHeight, cupWidth, sugarBottomHeight);
+            ctx.strokeStyle = 'rgba(200, 200, 200, 0.8)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(cupX, cupY + cupHeight - sugarBottomHeight, cupWidth, sugarBottomHeight);
+          }
+
+          ctx.fillStyle = '#1f2937';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(`${temperature.toFixed(0)}°C`, cupX + cupWidth / 2, cupY - 10);
+
+          particleRefs.current = particleRefs.current.filter(p => {
+            p.y += p.vy;
+            p.vy += 0.3;
+            if (p.x > cupX && p.x < cupX + cupWidth && p.y > cupY && p.y < cupY + cupHeight) p.inCup = true;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = p.inCup ? 'rgba(200, 200, 200, 0.6)' : 'rgba(200, 200, 200, 0.8)';
+            ctx.fill();
+            return p.y < canvas.height;
+          });
+          animationId = requestAnimationFrame(animate);
+        };
+        animate();
+        return () => cancelAnimationFrame(animationId);
+      }, [sugarBottomHeight, waterHeight, flameCount, flameIntensity, temperature]);
+
+      useEffect(() => {
+        if (onSugarAddition) {
+          for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+              const randomX = cupX + Math.random() * cupWidth;
+              const randomY = cupY - 60;
+              particleRefs.current.push({ x: randomX, y: randomY, vy: 0, inCup: false });
+            }, i * 30);
+          }
+        }
+      }, [onSugarAddition, cupX, cupY, cupWidth]);
+
+      return <canvas ref={canvasRef} width={400} height={380} style={{ width: '100%', height: 'auto', border: '1px solid #e5e7eb', borderRadius: '6px', backgroundColor: '#f9fafb', display: 'block' }} />;
+    };
+
+    // 메인 컴포넌트
+    const SolubilitySite = () => {
+      const [language, setLanguage] = useState('ko');
+      const [temperature, setTemperature] = useState(20);
+      const [waterAmount, setWaterAmount] = useState(100);
+      const [dissolvedAmount, setDissolvedAmount] = useState(0);
+      const [maxDissolvedAmount, setMaxDissolvedAmount] = useState(204);
+      const [sugarAdditionTrigger, setSugarAdditionTrigger] = useState(false);
+      
+      const t = TRANSLATIONS[language];
+
+      const solubilityData = { 0: 179, 10: 190, 20: 204, 30: 219, 40: 238, 50: 260, 60: 287, 70: 320, 80: 362, 90: 428, 100: 487 };
+
+      const getSolubilityAtTemp = (temp) => {
+        const tempFloor = Math.floor(temp / 10) * 10;
+        const tempCeil = tempFloor + 10;
+        const currentSol = solubilityData[tempFloor] || 179;
+        const nextSol = solubilityData[tempCeil] || 487;
+        const ratio = (temp - tempFloor) / 10;
+        return currentSol + (nextSol - currentSol) * ratio;
+      };
+
+      const handleTemperatureChange = (e) => {
+        const newTemp = parseFloat(e.target.value);
+        setTemperature(newTemp);
+        const newMaxDissolved = getSolubilityAtTemp(newTemp) * (waterAmount / 100);
+        setMaxDissolvedAmount(newMaxDissolved);
+      };
+
+      const handleWaterAmountChange = (amount) => {
+        setWaterAmount(amount);
+        const newMaxDissolved = getSolubilityAtTemp(temperature) * (amount / 100);
+        setMaxDissolvedAmount(newMaxDissolved);
+        const newDissolvedAmount = Math.min(dissolvedAmount * (amount / 100), newMaxDissolved);
+        setDissolvedAmount(newDissolvedAmount);
+      };
+
+      const addSugar = () => {
+        const addAmount = 10;
+        const newDissolvedAmount = dissolvedAmount + addAmount;
+        setDissolvedAmount(newDissolvedAmount);
+        setSugarAdditionTrigger(!sugarAdditionTrigger);
+      };
+
+      const reset = () => {
+        setTemperature(20);
+        setWaterAmount(100);
+        setDissolvedAmount(0);
+        setMaxDissolvedAmount(204);
+      };
+
+      const tempColor = temperature < 30 ? '#3b82f6' : temperature < 70 ? '#10b981' : '#ef4444';
+      const actualDissolvedInWater = Math.min(dissolvedAmount, maxDissolvedAmount);
+      const stackedSugarAmount = Math.max(0, dissolvedAmount - maxDissolvedAmount);
+
+      return (
+        <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '40px 20px', backgroundColor: '#f9fafb' }}>
+          {/* 언어 선택 */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '30px', gap: '10px' }}>
+            <button onClick={() => setLanguage('ko')} style={{ padding: '10px 20px', borderRadius: '6px', border: '2px solid #3b82f6', backgroundColor: language === 'ko' ? '#3b82f6' : 'white', color: language === 'ko' ? 'white' : '#3b82f6', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.95em', transition: 'all 0.3s ease' }}>🇰🇷 한글</button>
+            <button onClick={() => setLanguage('en')} style={{ padding: '10px 20px', borderRadius: '6px', border: '2px solid #10b981', backgroundColor: language === 'en' ? '#10b981' : 'white', color: language === 'en' ? 'white' : '#10b981', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.95em', transition: 'all 0.3s ease' }}>🇺🇸 English</button>
+          </div>
+
+          {/* 헤더 */}
+          <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+            <h1 style={{ fontSize: '3em', fontWeight: 'bold', margin: '0 0 10px 0', background: 'linear-gradient(135deg, #3b82f6, #ef4444)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.title}</h1>
+            <p style={{ fontSize: '1.2em', color: '#6b7280', margin: 0 }}>{t.subtitle}</p>
+          </div>
+
+          {/* 1단계 */}
+          <section style={{ backgroundColor: 'white', borderRadius: '12px', padding: '30px', marginBottom: '30px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <h2 style={{ fontSize: '1.8em', fontWeight: 'bold', marginTop: 0, marginBottom: '20px', color: '#1f2937', borderBottom: '3px solid #3b82f6', paddingBottom: '10px' }}>{t.stage1}</h2>
+            <div style={{ backgroundColor: '#f3f4f6', border: '2px dashed #d1d5db', borderRadius: '8px', padding: '15px', textAlign: 'center', marginBottom: '20px' }}>
+              <a href="https://www.youtube.com/watch?v=i5qOhNOUxCc" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', cursor: 'pointer', display: 'block' }}>
+                <div style={{ position: 'relative', backgroundColor: '#000', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                  <img src="https://img.youtube.com/vi/i5qOhNOUxCc/maxresdefault.jpg" alt="Sugar dissolving experiment" style={{ width: '100%', height: 'auto', display: 'block' }} onError={(e) => { e.target.src = `https://img.youtube.com/vi/i5qOhNOUxCc/hqdefault.jpg`; }} />
+                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px', backgroundColor: 'rgba(239, 68, 68, 0.9)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', cursor: 'pointer' }}>▶</div>
+                </div>
+              </a>
+              <p style={{ fontSize: '0.95em', fontWeight: '600', color: '#1f2937', margin: '0 0 8px 0' }}>{t.video}</p>
+            </div>
+            <p style={{ fontSize: '1em', lineHeight: '1.6', color: '#4b5563' }}><strong>{t.experimentInfo}</strong><br/>{t.experimentDesc}</p>
+          </section>
+
+          {/* 2단계 */}
+          <section style={{ backgroundColor: 'white', borderRadius: '12px', padding: '30px', marginBottom: '30px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <h2 style={{ fontSize: '1.8em', fontWeight: 'bold', marginTop: 0, marginBottom: '20px', color: '#1f2937', borderBottom: '3px solid #3b82f6', paddingBottom: '10px' }}>{t.stage2}</h2>
+            {[
+              { icon: '📖', title: t.definition, text: t.solubilityDef + ' ' + t.temperature20 },
+              { icon: '🌡️', title: t.cause, text: t.moleculeMotion },
+              { icon: '💧', title: t.condition, text: t.waterAmount2 },
+              { icon: '✅', title: t.result, text: t.saturated }
+            ].map((item, idx) => (
+              <div key={idx} style={{ backgroundColor: '#f0f9ff', border: '2px solid #93c5fd', borderRadius: '8px', padding: '15px', marginBottom: '15px' }}>
+                <h3 style={{ fontSize: '1.1em', fontWeight: 'bold', margin: '0 0 10px 0', color: '#1e40af' }}>{item.icon} {item.title}</h3>
+                <p style={{ fontSize: '0.95em', lineHeight: '1.6', margin: 0, color: '#374151' }}>{item.text}</p>
+              </div>
+            ))}
+          </section>
+
+          {/* 3단계 */}
+          <section style={{ backgroundColor: 'white', borderRadius: '12px', padding: '30px', marginBottom: '30px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <h2 style={{ fontSize: '1.8em', fontWeight: 'bold', marginTop: 0, marginBottom: '20px', color: '#1f2937', borderBottom: '3px solid #3b82f6', paddingBottom: '10px' }}>{t.stage3}</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
+              <div style={{ backgroundColor: '#f3f4f6', borderRadius: '8px', padding: '20px', border: '2px solid #d1d5db' }}>
+                <h3 style={{ fontSize: '1.1em', fontWeight: 'bold', margin: '0 0 15px 0', color: '#1f2937' }}>{t.controlPanel}</h3>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '0.95em', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>{t.temperature}: <span style={{ color: tempColor, fontWeight: 'bold' }}>{temperature.toFixed(1)}°C</span></label>
+                  <input type="range" min="0" max="100" step="1" value={temperature} onChange={handleTemperatureChange} style={{ width: '100%', height: '8px', borderRadius: '4px', outline: 'none', cursor: 'pointer' }} />
+                </div>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '0.95em', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>{t.waterAmount}</label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {[50, 100, 150, 200].map(amount => (
+                      <button key={amount} onClick={() => handleWaterAmountChange(amount)} style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.9em', fontWeight: '600', backgroundColor: waterAmount === amount ? '#3b82f6' : '#e5e7eb', color: waterAmount === amount ? 'white' : '#374151', transition: 'all 0.3s ease' }}>{amount}g</button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '6px', padding: '12px', marginBottom: '15px' }}>
+                  <h4 style={{ fontSize: '0.9em', fontWeight: 'bold', margin: '0 0 10px 0', color: '#1f2937' }}>{t.currentStatus}</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em', marginBottom: '6px', color: '#4b5563' }}><span>{t.maxSolubility}:</span><span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{maxDissolvedAmount.toFixed(1)}g</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em', marginBottom: '6px', color: '#4b5563' }}><span>{t.dissolvedSugar}:</span><span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{actualDissolvedInWater.toFixed(1)}g</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em', color: '#4b5563' }}><span>{t.saturation}:</span><span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{(actualDissolvedInWater / maxDissolvedAmount * 100).toFixed(1)}%</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em', marginTop: '6px', paddingTop: '6px', borderTop: '1px solid #e5e7eb', color: '#4b5563' }}><span>{t.stackedSugar}:</span><span style={{ fontWeight: 'bold', color: '#ef4444' }}>{stackedSugarAmount.toFixed(1)}g</span></div>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
+                  <button onClick={addSugar} style={{ width: '100%', padding: '12px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.95em', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s ease' }}>{t.addSugar}</button>
+                  <button onClick={reset} style={{ width: '100%', padding: '12px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.95em', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s ease' }}>{t.reset}</button>
+                </div>
+              </div>
+              <div style={{ backgroundColor: '#f9fafb', border: '2px solid #d1d5db', borderRadius: '8px', padding: '15px' }}>
+                <h4 style={{ fontSize: '1em', fontWeight: 'bold', margin: '0 0 10px 0', color: '#1f2937' }}>{t.cupSimulation}</h4>
+                <WaterCupSimulation temperature={temperature} waterAmount={waterAmount} dissolvedAmount={dissolvedAmount} maxDissolvedAmount={maxDissolvedAmount} onSugarAddition={sugarAdditionTrigger} />
+              </div>
+            </div>
+
+            <div style={{ backgroundColor: '#f9fafb', border: '2px solid #d1d5db', borderRadius: '8px', padding: '20px', marginBottom: '30px' }}>
+              <h4 style={{ fontSize: '1.1em', fontWeight: 'bold', margin: '0 0 15px 0', color: '#1f2937' }}>{t.solubilityChart}</h4>
+              <AdvancedSolubilityChart temperature={temperature} waterAmount={waterAmount} dissolvedAmount={dissolvedAmount} maxDissolvedAmount={maxDissolvedAmount} language={language} />
+            </div>
+          </section>
+
+          {/* 과학 영어 & 한자 */}
+          <section style={{ backgroundColor: 'white', borderRadius: '12px', padding: '30px', marginBottom: '30px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <h2 style={{ fontSize: '1.8em', fontWeight: 'bold', marginTop: 0, marginBottom: '30px', color: '#1f2937', borderBottom: '3px solid #3b82f6', paddingBottom: '10px' }}>{t.learning}</h2>
+
+            <div style={{ marginBottom: '40px' }}>
+              <h3 style={{ fontSize: '1.3em', fontWeight: 'bold', marginBottom: '20px', color: '#1e40af', paddingBottom: '10px', borderBottom: '2px solid #93c5fd' }}>{t.englishSection}</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                {[
+                  { word: 'Solubility', pronunciation: '/ˌsɑːljəˈbɪləti/', meaning: language === 'ko' ? '용해도' : 'solubility', example: 'The solubility of sugar increases with temperature.', exampleKo: '설탕의 용해도는 온도가 올라가면 증가한다.' },
+                  { word: 'Dissolve', pronunciation: '/dɪˈzɑːlv/', meaning: language === 'ko' ? '녹다' : 'to melt', example: 'Sugar dissolves in hot water.', exampleKo: '설탕은 뜨거운 물에 녹는다.' },
+                  { word: 'Solute', pronunciation: '/ˈsɑːljuːt/', meaning: language === 'ko' ? '용질' : 'dissolved substance', example: 'In the sugar solution, sugar is the solute.', exampleKo: '설탕 용액에서 설탕이 용질이다.' },
+                  { word: 'Solvent', pronunciation: '/ˈsɑːlvənt/', meaning: language === 'ko' ? '용매' : 'dissolving medium', example: 'Water is the most common solvent.', exampleKo: '물은 가장 흔한 용매이다.' },
+                  { word: 'Saturated', pronunciation: '/ˈsætʃəreɪtɪd/', meaning: language === 'ko' ? '포화된' : 'full of dissolved substance', example: 'A saturated solution contains the maximum amount of solute.', exampleKo: '포화 용액은 최대량의 용질을 포함한다.' },
+                  { word: 'Temperature', pronunciation: '/ˈtɛmpərətʃər/', meaning: language === 'ko' ? '온도' : 'degree of heat', example: 'Temperature affects the solubility of sugar.', exampleKo: '온도는 설탕의 용해도에 영향을 미친다.' }
+                ].map((item, idx) => (
+                  <div key={idx} style={{ backgroundColor: '#f0f9ff', border: '2px solid #93c5fd', borderRadius: '8px', padding: '15px' }}>
+                    <div style={{ fontSize: '1.1em', fontWeight: 'bold', color: '#1e40af', marginBottom: '6px' }}>{item.word}</div>
+                    <div style={{ fontSize: '0.85em', color: '#6b7280', marginBottom: '8px', fontStyle: 'italic' }}>{item.pronunciation}</div>
+                    <div style={{ fontSize: '0.9em', color: '#374151', marginBottom: '10px' }}><strong>{t.meaning}:</strong> {item.meaning}</div>
+                    <div style={{ fontSize: '0.85em', color: '#4b5563', backgroundColor: 'rgba(255, 255, 255, 0.6)', padding: '8px', borderRadius: '4px', borderLeft: '3px solid #3b82f6' }}>
+                      <div style={{ marginBottom: '6px' }}><strong>{t.example}:</strong> {item.example}</div>
+                      {language === 'ko' && <div style={{ fontSize: '0.8em', color: '#6b7280', marginBottom: '6px', fontStyle: 'italic' }}>의미: {item.exampleKo}</div>}
+                      {language === 'en' && <div style={{ fontSize: '0.8em', color: '#6b7280', marginBottom: '6px', fontFamily: 'Arial, sans-serif' }}>Korean: {item.exampleKo}</div>}
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <button onClick={() => { const utterance = new SpeechSynthesisUtterance(item.example); utterance.lang = 'en-US'; utterance.rate = 0.9; window.speechSynthesis.speak(utterance); }} style={{ padding: '4px 8px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75em', fontWeight: '600' }} title="Listen to the example">{t.listen}</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 style={{ fontSize: '1.3em', fontWeight: 'bold', marginBottom: '20px', color: '#9333ea', paddingBottom: '10px', borderBottom: '2px solid #d8b4fe' }}>{t.hanjaSection}</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                {[
+                  { character: '溶', pronunciation: 'yóng', hanglPronunciation: '용', meaning: language === 'ko' ? '녹다' : 'dissolve', radical: { char: '水', pronunciation: 'shuǐ', meaning: language === 'ko' ? '물' : 'water' }, phoneticChar: { char: '容', pronunciation: 'róng', meaning: language === 'ko' ? '담다' : 'contain' }, composition: language === 'ko' ? '물(水) + 담다(容) = 물에 담겨 녹다' : 'water(水) + contain(容) = dissolve in water', example: language === 'ko' ? '溶解度(용해도)' : '溶解度 (Solubility)' },
+                  { character: '解', pronunciation: 'jiě', hanglPronunciation: '해', meaning: language === 'ko' ? '풀다' : 'untie', radical: { char: '角', pronunciation: 'jiǎo', meaning: language === 'ko' ? '뿔' : 'horn' }, phoneticChar: { char: '卸', pronunciation: 'xiè', meaning: language === 'ko' ? '내리다' : 'lower' }, composition: language === 'ko' ? '뿔(角) + 내리다(卸) = 갈라져 풀어지다' : 'horn(角) + lower(卸) = split and loosen', example: language === 'ko' ? '溶解(용해)' : '溶解 (Dissolution)' },
+                  { character: '度', pronunciation: 'dù', hanglPronunciation: '도', meaning: language === 'ko' ? '정도' : 'degree', radical: { char: '广', pronunciation: 'guǎng', meaning: language === 'ko' ? '집' : 'house' }, phoneticChar: { char: '廷', pronunciation: 'tíng', meaning: language === 'ko' ? '궁정' : 'palace' }, composition: language === 'ko' ? '집(广) + 궁정(廷) = 규모를 재는 정도' : 'house(广) + palace(廷) = measure of scale', example: language === 'ko' ? '溫度(온도)' : '溫度 (Temperature)' },
+                  { character: '飽', pronunciation: 'bǎo', hanglPronunciation: '포', meaning: language === 'ko' ? '포화' : 'saturated', radical: { char: '飯', pronunciation: 'fàn', meaning: language === 'ko' ? '밥' : 'rice' }, phoneticChar: { char: '保', pronunciation: 'bǎo', meaning: language === 'ko' ? '보호' : 'protect' }, composition: language === 'ko' ? '밥(飯) + 보호(保) = 더 이상 못 먹을 정도' : 'rice(飯) + protect(保) = too full to eat more', example: language === 'ko' ? '飽和(포화)' : '飽和 (Saturation)' },
+                  { character: '溫', pronunciation: 'wēn', hanglPronunciation: '온', meaning: language === 'ko' ? '온도' : 'temperature', radical: { char: '水', pronunciation: 'shuǐ', meaning: language === 'ko' ? '물' : 'water' }, phoneticChar: { char: '温', pronunciation: 'wēn', meaning: language === 'ko' ? '따뜻함' : 'warmth' }, composition: language === 'ko' ? '물(水) + 따뜻함(温) = 물의 따뜻함' : 'water(水) + warmth(温) = temperature of water', example: language === 'ko' ? '溫度(온도)' : '溫度 (Temperature)' },
+                  { character: '質', pronunciation: 'zhì', hanglPronunciation: '질', meaning: language === 'ko' ? '물질' : 'substance', radical: { char: '貝', pronunciation: 'bèi', meaning: language === 'ko' ? '조개' : 'shell' }, phoneticChar: { char: '青', pronunciation: 'qīng', meaning: language === 'ko' ? '파란색' : 'blue' }, composition: language === 'ko' ? '조개(貝) + 파란색(青) = 본질' : 'shell(貝) + blue(青) = essence', example: language === 'ko' ? '物質(물질)' : '物質 (Matter)' }
+                ].map((item, idx) => (
+                  <div key={idx} style={{ backgroundColor: '#faf5ff', border: '2px solid #d8b4fe', borderRadius: '8px', padding: '15px' }}>
+                    <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#9333ea', marginBottom: '4px', textAlign: 'center' }}>{item.character}</div>
+                    <div style={{ fontSize: '0.75em', color: '#6b7280', marginBottom: '8px', textAlign: 'center', fontStyle: 'italic' }}>[{item.pronunciation}]</div>
+                    <div style={{ fontSize: '0.75em', color: '#9333ea', marginBottom: '8px', textAlign: 'center', fontWeight: '700', fontFamily: 'Arial, sans-serif' }}>{language === 'ko' ? '한글음' : 'Korean'}: {item.hanglPronunciation}</div>
+                    <div style={{ fontSize: '0.85em', color: '#374151', marginBottom: '10px' }}>
+                      <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>{t.meaning}: {item.meaning}</div>
+                      <div style={{ marginBottom: '8px', backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '8px', borderRadius: '4px', border: '1px solid #e9d5ff' }}>
+                        <div style={{ fontWeight: 'bold', color: '#7c3aed', marginBottom: '4px' }}>{t.radical}</div>
+                        <div style={{ marginLeft: '8px', fontSize: '0.8em' }}><span style={{ fontSize: '1.5em', fontWeight: 'bold', color: '#9333ea', marginRight: '6px' }}>{item.radical.char}</span><span style={{ fontSize: '0.85em' }}>({item.radical.pronunciation}) = {item.radical.meaning}</span></div>
+                      </div>
+                      <div style={{ marginBottom: '8px', backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '8px', borderRadius: '4px', border: '1px solid #e9d5ff' }}>
+                        <div style={{ fontWeight: 'bold', color: '#7c3aed', marginBottom: '4px' }}>{t.phonetic}</div>
+                        <div style={{ marginLeft: '8px', fontSize: '0.8em' }}><span style={{ fontSize: '1.5em', fontWeight: 'bold', color: '#7c3aed', marginRight: '6px' }}>{item.phoneticChar.char}</span><span style={{ fontSize: '0.85em' }}>({item.phoneticChar.pronunciation}) = {item.phoneticChar.meaning}</span></div>
+                      </div>
+                      <div style={{ backgroundColor: 'rgba(147, 51, 234, 0.1)', padding: '8px', borderRadius: '4px', borderLeft: '3px solid #9333ea' }}>
+                        <div style={{ fontWeight: 'bold', color: '#9333ea', fontSize: '0.8em', marginBottom: '4px' }}>{t.combined}</div>
+                        <div style={{ fontSize: '0.75em', color: '#374151' }}>{item.composition}</div>
+                      </div>
+                      <div style={{ fontSize: '0.75em', color: '#4b5563', backgroundColor: 'rgba(255, 255, 255, 0.6)', padding: '6px', borderRadius: '4px', marginTop: '6px' }}><strong>{t.example2}:</strong> {item.example}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* 푸터 */}
+          <div style={{ textAlign: 'center', color: '#6b7280', fontSize: '0.9em', padding: '20px 0', borderTop: '1px solid #e5e7eb' }}>
+            <p>🧪 {t.version}</p>
+            <p>{language === 'ko' ? '이 사이트는 중학생들이 쉽고 재미있게 과학 개념을 이해할 수 있도록 만들어졌습니다.' : 'This site is designed to help middle school students understand science concepts in an easy and fun way.'}</p>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<SolubilitySite />, document.getElementById('root'));
+  </script>
+</body>
+</html>
