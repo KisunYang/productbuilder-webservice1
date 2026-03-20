@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun And Fun</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle">🌙 Dark Mode</button>
+    <div class="page-wrapper">
+
+        <!-- 로또 섹션 -->
+        <div class="container" id="lotto">
+            <h1>🎱 로또 번호 생성기</h1>
+            <div id="lotto-sets"></div>
+            <div class="bonus-option">
+                <label>
+                    <input type="checkbox" id="bonus-check"> 보너스 번호 포함
+                </label>
+            </div>
+            <div class="controls">
+                <button id="generate">번호 생성</button>
+            </div>
+        </div>
+
+        <!-- 저녁 메뉴 섹션 -->
+        <div class="container" id="menu">
+            <h1>🍽️ 오늘 저녁 뭐 먹지?</h1>
+            <div class="country-checkboxes">
+                <label><input type="checkbox" class="country-check" value="한국"> 🇰🇷 한국</label>
+                <label><input type="checkbox" class="country-check" value="일본"> 🇯🇵 일본</label>
+                <label><input type="checkbox" class="country-check" value="중국"> 🇨🇳 중국</label>
+                <label><input type="checkbox" class="country-check" value="이탈리아"> 🇮🇹 이탈리아</label>
+                <label><input type="checkbox" class="country-check" value="프랑스"> 🇫🇷 프랑스</label>
+                <label><input type="checkbox" class="country-check" value="베트남"> 🇻🇳 베트남</label>
+                <label><input type="checkbox" class="country-check" value="태국"> 🇹🇭 태국</label>
+                <label><input type="checkbox" class="country-check" value="스페인"> 🇪🇸 스페인</label>
+                <label><input type="checkbox" class="country-check" value="멕시코"> 🇲🇽 멕시코</label>
+                <label><input type="checkbox" class="country-check" value="인도"> 🇮🇳 인도</label>
+            </div>
+            <div id="menu-result" class="menu-result"></div>
+            <div class="controls">
+                <button id="recommend">메뉴 추천받기</button>
+            </div>
+        </div>
+
+        <!-- Google Arts & Culture 게임 섹션 -->
+        <div class="container" id="arts">
+            <h1>🎨 Google Arts &amp; Culture</h1>
+            <p class="form-desc">Google Arts &amp; Culture의 재미있는 실험들을 즐겨보세요!</p>
+            <div class="controls arts-btns">
+                <a href="https://artsandculture.google.com/experiment/blob-opera/AAHWrq360NcGbw?cp=e30." target="_blank" rel="noopener noreferrer">
+                    <button>🎵 블롭 오페라</button>
+                </a>
+                <a href="https://artsandculture.google.com/experiment/ZQFQrRgrvmOImQ" target="_blank" rel="noopener noreferrer">
+                    <button>🥖 바게트 스프린트</button>
+                </a>
+                <a href="https://artsandculture.google.com/art-zoom-out" target="_blank" rel="noopener noreferrer">
+                    <button>🖼️ 아트 줌 아웃</button>
+                </a>
+                <a href="https://artsandculture.google.com/nearby" target="_blank" rel="noopener noreferrer">
+                    <button>📍 내 주변 박물관·전시</button>
+                </a>
+                <a href="https://artsandculture.google.com/experiment/8AGlfzgsYmBeIA" target="_blank" rel="noopener noreferrer">
+                    <button>🗣️ 토킹 투어</button>
+                </a>
+                <a href="https://artsandculture.google.com/experiment/viola-the-bird/nAEJVwNkp-FnrQ" target="_blank" rel="noopener noreferrer">
+                    <button>🐦 비올라 더 버드</button>
+                </a>
+                <a href="https://artsandculture.google.com/experiment/puzzle-party/EwGBPZlIzv0KRw" target="_blank" rel="noopener noreferrer">
+                    <button>🧩 퍼즐 파티</button>
+                </a>
+            </div>
+        </div>
+
+        <!-- 제휴 문의 섹션 -->
+        <div class="container" id="contact">
+            <h1>🤝 제휴 문의</h1>
+            <p class="form-desc">제휴 및 협업 문의를 남겨주시면 검토 후 연락드리겠습니다.</p>
+            <form id="contact-form" action="https://formspree.io/f/xlgpogoq" method="POST">
+                <div class="form-group">
+                    <label for="name">이름 / 회사명</label>
+                    <input type="text" id="name" name="name" placeholder="홍길동 / (주)회사명" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">문의 내용</label>
+                    <textarea id="message" name="message" rows="4" placeholder="제휴 관련 내용을 자유롭게 작성해 주세요." required></textarea>
+                </div>
+                <div class="controls">
+                    <button type="submit">문의 보내기</button>
+                </div>
+                <p id="form-status" class="form-status"></p>
+            </form>
+        </div>
+
+
+        <!-- 댓글 섹션 -->
+        <div class="container" id="comments">
+            <h1>💬 댓글</h1>
+            <div class="comment-tabs">
+                <button class="comment-tab active" data-tab="livere">라이브리 댓글</button>
+                <button class="comment-tab" data-tab="disqus">디스커스 댓글</button>
+            </div>
+            <div id="comment-livere" class="comment-panel active">
+                <livere-comment client-id="cJ4S4rWPXteyHJUcmcD8"></livere-comment>
+            </div>
+            <div id="comment-disqus" class="comment-panel">
+                <div id="disqus_thread"></div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+    <script type="module" src="https://www.livere.org/livere-widget.js"></script>
+    <script>
+        (function() {
+            var disqusLoaded = false;
+            document.querySelectorAll('.comment-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.comment-tab').forEach(function(t) { t.classList.remove('active'); });
+                    document.querySelectorAll('.comment-panel').forEach(function(p) { p.classList.remove('active'); });
+                    tab.classList.add('active');
+                    document.getElementById('comment-' + tab.dataset.tab).classList.add('active');
+
+                    if (tab.dataset.tab === 'disqus' && !disqusLoaded) {
+                        disqusLoaded = true;
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://https-productbuilder-webservice1-pages-dev.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    }
+                });
+            });
+        })();
+
+        // 해시로 해당 섹션으로 스크롤
+        function scrollToHash() {
+            var hash = window.location.hash;
+            if (hash) {
+                var el = document.querySelector(hash);
+                if (el) {
+                    setTimeout(function() {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+        window.addEventListener('load', scrollToHash);
+        window.addEventListener('hashchange', scrollToHash);
+    </script>
+</body>
+</html>
