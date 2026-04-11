@@ -240,6 +240,65 @@
                     100% { transform: rotateY(0deg) scale(1); }
                 }
                 .tarot-slot.flipping { animation: cardFlip 0.5s ease; }
+
+                .ai-section {
+                    display: none;
+                    margin-top: 20px;
+                    padding: 20px;
+                    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+                    border-radius: 14px;
+                    border: 1px solid #bae6fd;
+                }
+                .ai-section h3 {
+                    font-size: 1rem;
+                    color: #0369a1;
+                    margin-bottom: 6px;
+                }
+                .ai-section .ai-hint {
+                    font-size: 0.84rem;
+                    color: #64748b;
+                    margin-bottom: 14px;
+                }
+                .ai-prompt-box {
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 10px;
+                    padding: 14px;
+                    font-size: 0.85rem;
+                    line-height: 1.6;
+                    color: #334155;
+                    max-height: 180px;
+                    overflow-y: auto;
+                    margin-bottom: 14px;
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                }
+                .ai-buttons {
+                    display: flex;
+                    gap: 8px;
+                    flex-wrap: wrap;
+                }
+                .ai-btn {
+                    padding: 10px 18px;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    font-family: inherit;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    text-decoration: none;
+                    color: white;
+                }
+                .ai-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+                .ai-btn.copy { background: #475569; }
+                .ai-btn.copy.copied { background: #16a34a; }
+                .ai-btn.chatgpt { background: #10a37f; }
+                .ai-btn.gemini { background: #4285f4; }
+                .ai-btn.claude { background: #d97706; }
             </style>
 
             <input type="text" class="tarot-input" id="tarot-question" placeholder="질문을 입력하세요... (예: 이번 시험 결과는 어떨까?)" maxlength="200">
@@ -280,6 +339,19 @@
             </div>
 
             <div class="tarot-reading" id="tarot-reading"></div>
+
+            <!-- AI 해석 섹션 -->
+            <div class="ai-section" id="ai-section">
+                <h3>🤖 AI에게 더 자세한 해석 받기</h3>
+                <p class="ai-hint">아래 해석 요청문을 복사한 뒤, 원하는 AI에 붙여넣어 보세요.</p>
+                <div class="ai-prompt-box" id="ai-prompt-box"></div>
+                <div class="ai-buttons">
+                    <button class="ai-btn copy" id="ai-copy-btn" onclick="copyAiPrompt()">📋 해석문구 복사</button>
+                    <a class="ai-btn chatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">💬 ChatGPT</a>
+                    <a class="ai-btn gemini" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">✨ Gemini</a>
+                    <a class="ai-btn claude" href="https://claude.ai/" target="_blank" rel="noopener noreferrer">🧡 Claude</a>
+                </div>
+            </div>
 
             <script>
             (function() {
@@ -416,6 +488,7 @@
                     usedIndices = [];
                     document.getElementById('tarot-read-btn').disabled = true;
                     document.getElementById('tarot-reading').style.display = 'none';
+                    document.getElementById('ai-section').style.display = 'none';
                     for (var i = 1; i <= 3; i++) {
                         var el = document.getElementById('tarot-card-' + i);
                         el.classList.remove('drawn', 'flipping');
@@ -479,7 +552,41 @@
                     var readingEl = document.getElementById('tarot-reading');
                     readingEl.innerHTML = html;
                     readingEl.style.display = 'block';
+
+                    // AI 프롬프트 생성
+                    var prompt = '당신은 전문 타로 리더입니다. 아래 질문과 뽑힌 3장의 타로 카드를 기반으로 자세하고 깊이 있는 타로 리딩을 해주세요.\n\n';
+                    prompt += '【질문】\n' + question + '\n\n';
+                    prompt += '【뽑힌 카드 (3-Card Spread: 과거-현재-미래)】\n';
+                    for (var j = 0; j < 3; j++) {
+                        var dc = drawnCards[j];
+                        var pos = j === 0 ? '과거' : j === 1 ? '현재' : '미래';
+                        prompt += (j+1) + '. ' + pos + ': ' + dc.card.name + ' (' + dc.card.kr + ')' + (dc.reversed ? ' - 역방향(Reversed)' : ' - 정방향(Upright)') + '\n';
+                    }
+                    prompt += '\n【리딩 요청사항】\n';
+                    prompt += '1. 각 카드의 의미를 위치(과거/현재/미래)에 맞게 자세히 해석해 주세요.\n';
+                    prompt += '2. 역방향 카드가 있다면 역방향 특유의 의미를 반영해 주세요.\n';
+                    prompt += '3. 3장의 카드를 종합하여 질문에 대한 전체적인 흐름과 조언을 해주세요.\n';
+                    prompt += '4. 따뜻하고 격려하는 톤으로, 구체적이고 실생활에 도움이 되는 조언을 포함해 주세요.\n';
+
+                    document.getElementById('ai-prompt-box').textContent = prompt;
+                    document.getElementById('ai-section').style.display = 'block';
+                    document.getElementById('ai-copy-btn').textContent = '📋 해석문구 복사';
+                    document.getElementById('ai-copy-btn').classList.remove('copied');
+
                     readingEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                window.copyAiPrompt = function() {
+                    var text = document.getElementById('ai-prompt-box').textContent;
+                    navigator.clipboard.writeText(text).then(function() {
+                        var btn = document.getElementById('ai-copy-btn');
+                        btn.textContent = '✅ 복사 완료!';
+                        btn.classList.add('copied');
+                        setTimeout(function() {
+                            btn.textContent = '📋 해석문구 복사';
+                            btn.classList.remove('copied');
+                        }, 2000);
+                    });
                 };
             })();
             </script>
