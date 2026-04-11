@@ -350,6 +350,124 @@
             transition: width 0.5s;
         }
 
+        /* 문제 토글 */
+        .problem-toggle {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #1e293b;
+            margin-bottom: 6px;
+            transition: background 0.15s;
+        }
+        .problem-toggle:hover { background: #f1f5f9; }
+        .problem-toggle .toggle-arrow {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            transition: transform 0.2s;
+        }
+        .problem-toggle.open .toggle-arrow { transform: rotate(90deg); }
+        .problem-detail {
+            display: none;
+            padding: 0 4px;
+            margin-bottom: 12px;
+        }
+        .problem-detail.open { display: block; }
+        .problem-detail .error-table { margin-top: 4px; }
+
+        /* 빈도 바 */
+        .freq-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .freq-bar {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .freq-bar-fill {
+            height: 100%;
+            border-radius: 8px;
+        }
+        .freq-count {
+            font-size: 0.82rem;
+            font-weight: 700;
+            min-width: 32px;
+            text-align: right;
+        }
+
+        /* 위험도 별 */
+        .danger-stars { color: #dc2626; letter-spacing: 1px; font-size: 0.8rem; }
+
+        /* 로드맵 */
+        .roadmap-step {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+        .roadmap-step::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 36px;
+            bottom: -14px;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        .roadmap-step:last-child::before { display: none; }
+        .roadmap-badge {
+            width: 32px; height: 32px; min-width: 32px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 0.75rem;
+            color: white;
+            z-index: 1;
+        }
+        .roadmap-content { flex: 1; }
+        .roadmap-content .rm-title { font-weight: 700; font-size: 0.92rem; color: #1e293b; }
+        .roadmap-content .rm-period { font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; }
+        .roadmap-content .rm-desc { font-size: 0.85rem; color: #475569; }
+        .roadmap-content .rm-goal {
+            margin-top: 6px;
+            font-size: 0.82rem;
+            padding: 4px 10px;
+            background: #f0fdf4;
+            border-radius: 6px;
+            color: #166534;
+            display: inline-block;
+        }
+
+        /* 선생님 조언 */
+        .advice-item {
+            padding: 14px 16px;
+            border-radius: 10px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            margin-bottom: 10px;
+        }
+        .advice-item .advice-title {
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 6px;
+            font-size: 0.92rem;
+        }
+        .advice-item .advice-desc {
+            font-size: 0.88rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+
         /* 반응형 */
         @media (max-width: 640px) {
             .page-container { padding: 12px 10px 40px; }
@@ -408,192 +526,450 @@
     <!-- 탭 2: 오류 분석 -->
     <div class="tab-panel" id="tab-analysis">
 
+        <!-- 핵심 문법 규칙 요약 -->
+        <div class="card">
+            <h2>핵심 문법 규칙 요약</h2>
+            <table class="error-table">
+                <thead>
+                    <tr><th>No.</th><th>규칙</th><th>관계대명사</th><th>예시</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>선행사가 <strong>사람</strong>이면</td><td>who / that</td><td>The boy <strong>who</strong> runs fast</td></tr>
+                    <tr><td>2</td><td>선행사가 <strong>사물/동물</strong>이면</td><td>which / that</td><td>The dog <strong>which</strong> barks</td></tr>
+                    <tr><td>3</td><td>선행사가 <strong>사람+사물</strong> 복합이면</td><td>that (권장)</td><td>People and things <strong>that</strong> matter</td></tr>
+                    <tr><td>4</td><td>관계사절 안에서 <strong>주어 역할</strong>이면</td><td>주격 who / which / that</td><td>...who <strong>is</strong> tall</td></tr>
+                    <tr><td>5</td><td>관계사절 안에서 동사 앞이면 who/which,<br>동사 뒤면 whom(목적격)</td><td>주격 vs 목적격</td><td>whom I met (목적격)</td></tr>
+                    <tr><td>6</td><td>관계사절의 동사는 <strong>선행사의 수</strong>에 맞춤</td><td>수 일치</td><td>the girls who <strong>ARE</strong> (복수)</td></tr>
+                    <tr><td>7</td><td>소유 의미가 필요하면</td><td>whose + 명사</td><td>a friend <strong>whose</strong> sister...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- 성적 요약 -->
         <div class="card">
             <h2>성적 요약</h2>
             <div class="score-summary">
                 <div class="score-card total">
-                    <div class="value">10</div>
+                    <div class="value">11</div>
                     <div class="label">전체 문항</div>
                 </div>
                 <div class="score-card correct">
-                    <div class="value">6</div>
-                    <div class="label">정답</div>
+                    <div class="value">11</div>
+                    <div class="label">전체 선지 분석</div>
                 </div>
                 <div class="score-card wrong">
-                    <div class="value">4</div>
-                    <div class="label">오답</div>
+                    <div class="value">36</div>
+                    <div class="label">오류 선지 수</div>
                 </div>
                 <div class="score-card rate">
-                    <div class="value">60%</div>
-                    <div class="label">정답률</div>
-                </div>
-            </div>
-            <div style="margin-top:8px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#64748b; margin-bottom:4px;">
-                    <span>정답률</span><span>60%</span>
-                </div>
-                <div class="progress-bar-wrap">
-                    <div class="progress-bar-fill" style="width:60%; background: linear-gradient(90deg, #f59e0b, #d97706);"></div>
+                    <div class="value">63~73</div>
+                    <div class="label">문항 번호</div>
                 </div>
             </div>
         </div>
 
-        <!-- 문항별 분석 -->
+        <!-- 문제별 상세 분석 -->
         <div class="card">
-            <h2>문항별 결과</h2>
+            <h2>문제별 상세 분석 (문제를 클릭하면 펼쳐집니다)</h2>
+
+            <!-- 63번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 63 — 옳은 것 2개 고르기: who / which / that 선행사 일치
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>I want to buy a dog <strong>who</strong> can be my friend.</td><td><span class="badge badge-red">X</span></td><td>dog는 사물 → who → <strong>which</strong> 또는 that</td></tr>
+                        <tr><td>2</td><td>There were few passengers <strong>which</strong> got hurt.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>3</td><td>I live in a house <strong>which</strong> has a big living room.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>4</td><td>A director is a person <strong>who</strong> makes movies.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>5</td><td>It is a wand <strong>who have</strong> magic power.</td><td><span class="badge badge-red">X</span></td><td>wand는 사물 → who → <strong>which</strong> / have → <strong>has</strong> (단수)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 64번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 64 — 옳은 것: 목적격 whom vs 주격 who / 선행사 선택
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Jane has a brother <strong>whom</strong> is handsome.</td><td><span class="badge badge-red">X</span></td><td>whom 뒤에 동사(is) → 주격 <strong>who</strong>로 교체</td></tr>
+                        <tr><td>2</td><td>Look at the girl <strong>which</strong> is waiting for her bag.</td><td><span class="badge badge-red">X</span></td><td>girl은 사람 → which → <strong>who</strong> 또는 that</td></tr>
+                        <tr><td>3</td><td>This is the book <strong>who</strong> is very popular in Korea.</td><td><span class="badge badge-red">X</span></td><td>book은 사물 → who → <strong>which</strong> 또는 that</td></tr>
+                        <tr><td>4</td><td>Is he the man <strong>whom</strong> sings to Juliet every night?</td><td><span class="badge badge-red">X</span></td><td>whom 뒤에 동사(sings) → 주격 <strong>who</strong>로 교체</td></tr>
+                        <tr><td>5</td><td>The students <strong>that</strong> attend this school must wear school uniforms.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 65번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 65 — 옳은 것: 관계대명사 격 선택(주격/목적격) + 선행사 일치
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>I have a friend <strong>who</strong> sister knows you.</td><td><span class="badge badge-red">X</span></td><td>who 뒤에 명사(sister) → 소유격 <strong>whose</strong></td></tr>
+                        <tr><td>2</td><td>A diver is a person who <strong>swim</strong> underwater.</td><td><span class="badge badge-red">X</span></td><td>person 단수 → swim → <strong>swims</strong></td></tr>
+                        <tr><td>3</td><td>That is a lady <strong>whom</strong> gave me a lot of advice.</td><td><span class="badge badge-red">X</span></td><td>whom 뒤에 동사(gave) → 주격 <strong>who</strong>로 교체</td></tr>
+                        <tr><td>4</td><td>An electronic dictionary <strong>that</strong> I want to buy is expensive.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>5</td><td>The child and the plants <strong>which</strong> live together can be good friends.</td><td><span class="badge badge-red">X</span></td><td>사람+사물 복합 선행사 → which → <strong>that</strong> 권장</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 66번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 66 — 어색한 것: 사람/사물 선행사에 따른 who / which / that 구분
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>I called the boys <strong>who</strong> laughed at me.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>2</td><td>He met a woman <strong>who</strong> was an artist.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>3</td><td>Is an artist a person <strong>which</strong> paints a painting?</td><td><span class="badge badge-red">X</span></td><td>person은 사람 → which → <strong>who</strong> 또는 that</td></tr>
+                        <tr><td>4</td><td>The boy <strong>who</strong> lives next door is a violinist.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>5</td><td>I have a book <strong>which</strong> is very interesting.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 67번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 67 — 옳은 것: who / which / that 선행사 일치 + 동사 수 일치
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>She is the girl <strong>that</strong> can help you.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>2</td><td>I have a book which <strong>are</strong> interesting.</td><td><span class="badge badge-red">X</span></td><td>book 단수 → are → <strong>is</strong></td></tr>
+                        <tr><td>3</td><td>This is a dictionary <strong>who</strong> is so cheap.</td><td><span class="badge badge-red">X</span></td><td>dictionary는 사물 → who → <strong>which</strong></td></tr>
+                        <tr><td>4</td><td>This is the woman who <strong>work</strong> at the bank.</td><td><span class="badge badge-red">X</span></td><td>woman 3인칭 단수 → work → <strong>works</strong></td></tr>
+                        <tr><td>5</td><td>This is the book that <strong>explain</strong> how to use computer.</td><td><span class="badge badge-red">X</span></td><td>book 단수 → explain → <strong>explains</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 68번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 68 — 옳은 것: 관계대명사 선택(사람/사물) + 동사 수/시제 일치
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>This is the dog <strong>who</strong> bit me yesterday.</td><td><span class="badge badge-red">X</span></td><td>dog는 사물 → who → <strong>that</strong> 또는 which</td></tr>
+                        <tr><td>2</td><td>I need a room <strong>which</strong> has enough space.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>3</td><td>A movie star <strong>which</strong> is famous disappeared.</td><td><span class="badge badge-red">X</span></td><td>movie star는 사람 → which → <strong>who</strong> 또는 that</td></tr>
+                        <tr><td>4</td><td>The children who <strong>was</strong> eating apples were late.</td><td><span class="badge badge-red">X</span></td><td>children 복수 → was → <strong>were</strong></td></tr>
+                        <tr><td>5</td><td>Do you know the girls who <strong>is</strong> singing on the stage?</td><td><span class="badge badge-red">X</span></td><td>girls 복수 → is → <strong>are</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 69번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 69 — 옳은 것 2개: 수량 표현 + 관계대명사 사람/사물 구분
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>There isn't <strong>many</strong> butter on the plate.</td><td><span class="badge badge-red">X</span></td><td>butter는 불가산명사 → many → <strong>much</strong></td></tr>
+                        <tr><td>2</td><td>There was a lot of food on the table.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>3</td><td>The campsite <strong>which</strong> had a playground was clean.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>4</td><td>The Sphinx is a huge statue <strong>who</strong> is near the pyramids.</td><td><span class="badge badge-red">X</span></td><td>statue는 사물 → who → <strong>which</strong></td></tr>
+                        <tr><td>5</td><td>Only two of the people <strong>which</strong> took the test passed it.</td><td><span class="badge badge-red">X</span></td><td>people은 사람 → which → <strong>who</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 70번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 70 — 옳은 것: 관계대명사절 동사 수 일치 + 선행사 일치
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>The waitress who served us <strong>were</strong> impolite.</td><td><span class="badge badge-red">X</span></td><td>waitress 단수 → were → <strong>was</strong></td></tr>
+                        <tr><td>2</td><td>What happened to the pictures which <strong>was</strong> on the wall?</td><td><span class="badge badge-red">X</span></td><td>pictures 복수 → was → <strong>were</strong></td></tr>
+                        <tr><td>3</td><td>The bus <strong>who</strong> goes to the airport runs every half hour.</td><td><span class="badge badge-red">X</span></td><td>bus는 사물 → who → <strong>that</strong> 또는 which</td></tr>
+                        <tr><td>4</td><td>A burglar is someone who <strong>break</strong> into a house to steal things.</td><td><span class="badge badge-red">X</span></td><td>someone 단수 → break → <strong>breaks</strong></td></tr>
+                        <tr><td>5</td><td>You always ask the questions <strong>which</strong> are difficult to answer.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 71번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 71 — 옳은 것: 사람/사물/장소 선행사에 따른 who / which / that
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>I'll attend a film festival <strong>who</strong> will be held in Venice.</td><td><span class="badge badge-red">X</span></td><td>film festival은 사물/행사 → who → <strong>which</strong> 또는 that</td></tr>
+                        <tr><td>2</td><td>The company makes products <strong>who</strong> appeal to teenagers.</td><td><span class="badge badge-red">X</span></td><td>products는 사물 → who → <strong>which</strong> 또는 that</td></tr>
+                        <tr><td>3</td><td>The clerk recommends a bicycle <strong>which</strong> comes with a basket.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>4</td><td>Almost everyone <strong>which</strong> lives in this town retired.</td><td><span class="badge badge-red">X</span></td><td>everyone은 사람 → which → <strong>who</strong> 또는 that</td></tr>
+                        <tr><td>5</td><td>They got married in a church <strong>who</strong> was built 100 years ago.</td><td><span class="badge badge-red">X</span></td><td>church는 장소/사물 → who → <strong>which</strong> 또는 that</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 72번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 72 — 올바른 짝 찾기: 선행사 사람/사물 구분 + 복합 선행사 → that
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>a</td><td>It's a balloon <strong>that</strong> is flying in the sky.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>b</td><td>Mina is walking her dog <strong>which</strong> has long legs.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>c</td><td>Alice lives in a house <strong>who</strong> has a round window.</td><td><span class="badge badge-red">X</span></td><td>house는 사물 → who → <strong>which</strong> 또는 that</td></tr>
+                        <tr><td>d</td><td>Look at the man and his dog <strong>which</strong> are running.</td><td><span class="badge badge-red">X</span></td><td>사람(man)+사물(dog) 복합 선행사 → which → <strong>that</strong></td></tr>
+                        <tr><td>e</td><td>I like the actor <strong>who</strong> played Spiderman in the movie.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 73번 -->
+            <button class="problem-toggle" onclick="toggleProblem(this)">
+                문제 73 — 올바른 짝 찾기: 관계사절 위치(후치 수식) + 선행사 일치 + 동사 수 일치
+                <span class="toggle-arrow">▶</span>
+            </button>
+            <div class="problem-detail">
+                <table class="error-table">
+                    <thead><tr><th>번호</th><th>문장</th><th>정오</th><th>오류 원인 / 정답 근거</th></tr></thead>
+                    <tbody>
+                        <tr><td>a</td><td>The book <strong>that</strong> is on the desk is mine.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                        <tr><td>b</td><td>The boy is cute <strong>who</strong> is in the room.</td><td><span class="badge badge-red">X</span></td><td>관계사절은 선행사 바로 뒤에 위치해야 함 → <strong>The boy who is in the room is cute.</strong></td></tr>
+                        <tr><td>c</td><td>There was a girl in the town <strong>which</strong> had beautiful eyes.</td><td><span class="badge badge-red">X</span></td><td>선행사는 girl(사람) → which → <strong>who</strong> / 관계사절 위치도 모호</td></tr>
+                        <tr><td>d</td><td>The dogs which are playing in the garden <strong>is</strong> mine.</td><td><span class="badge badge-red">X</span></td><td>dogs 복수 → is → <strong>are</strong></td></tr>
+                        <tr><td>e</td><td>The boy <strong>who</strong> was wearing red shoes is my cousin.</td><td><span class="badge badge-green">O</span></td><td>정답 (어법상 올바름)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 자주 나오는 오류 유형 TOP 4 -->
+        <div class="card">
+            <h2>자주 나오는 오류 유형 TOP 4</h2>
             <table class="error-table">
                 <thead>
-                    <tr>
-                        <th>문항</th>
-                        <th>결과</th>
-                        <th>유형</th>
-                        <th>오류 내용</th>
-                    </tr>
+                    <tr><th>순위</th><th>오류 유형</th><th>교정 방법</th><th>대표 예시</th></tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1번</td>
-                        <td><span class="badge badge-green">정답</span></td>
-                        <td>who 사용</td>
-                        <td>-</td>
+                        <td><strong>1위</strong></td>
+                        <td>사물/동물에 <strong>who</strong> 사용</td>
+                        <td>who → <strong>which</strong> 또는 that</td>
+                        <td>dog, wand, book, statue, church 등에 who 쓰는 실수</td>
                     </tr>
                     <tr>
-                        <td>2번</td>
-                        <td><span class="badge badge-green">정답</span></td>
-                        <td>who 사용</td>
-                        <td>-</td>
+                        <td><strong>2위</strong></td>
+                        <td>사람에 <strong>which</strong> 사용</td>
+                        <td>which → <strong>who</strong> 또는 that</td>
+                        <td>person, girl, children, everyone 등에 which 쓰는 실수</td>
                     </tr>
                     <tr>
-                        <td>3번</td>
-                        <td><span class="badge badge-red">오답</span></td>
-                        <td>who/which 혼동</td>
-                        <td>사람 선행사에 which 사용</td>
+                        <td><strong>3위</strong></td>
+                        <td>관계사절 <strong>동사 수 불일치</strong></td>
+                        <td>선행사 단/복수에 맞게 동사 변환</td>
+                        <td>children who was → <strong>were</strong> / waitress who were → <strong>was</strong></td>
                     </tr>
                     <tr>
-                        <td>4번</td>
-                        <td><span class="badge badge-green">정답</span></td>
-                        <td>어색한 문장 찾기</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>5번</td>
-                        <td><span class="badge badge-red">오답</span></td>
-                        <td>관계대명사 + 동사 수일치</td>
-                        <td>선행사의 수에 동사를 일치시키지 못함</td>
-                    </tr>
-                    <tr>
-                        <td>6번</td>
-                        <td><span class="badge badge-green">정답</span></td>
-                        <td>which 사용 (2개 고르기)</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>7번</td>
-                        <td><span class="badge badge-red">오답</span></td>
-                        <td>which/who 구별</td>
-                        <td>사물 선행사에 who 사용</td>
-                    </tr>
-                    <tr>
-                        <td>8번</td>
-                        <td><span class="badge badge-green">정답</span></td>
-                        <td>복합 문장</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>72번</td>
-                        <td><span class="badge badge-green">정답</span></td>
-                        <td>올바른 짝 찾기</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>73번</td>
-                        <td><span class="badge badge-red">오답</span></td>
-                        <td>올바른 짝 찾기</td>
-                        <td>관계대명사 뒤 동사 형태 판별 실수</td>
+                        <td><strong>4위</strong></td>
+                        <td><strong>whom</strong>(목적격) 자리에 who 혼용</td>
+                        <td>동사 앞 = 주격 who,<br>동사 뒤 = 목적격 whom</td>
+                        <td>a brother whom is handsome → <strong>who</strong> (뒤에 동사)</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- 오류 유형 분석 -->
+        <!-- 약점 분석: 오류 유형별 빈도 -->
         <div class="card">
-            <h2>핵심 오류 유형 분석</h2>
+            <h2>약점 분석 - 오류 유형별 빈도 (전체 틀린 선지 기준)</h2>
 
-            <ul class="error-type-list">
-                <li class="error-type-item critical">
-                    <div class="type-title">오류 유형 1: who와 which 혼동 (2회 발생)</div>
-                    <div class="type-desc">
-                        사람을 선행사로 하는 경우 <strong>who</strong>, 사물/동물을 선행사로 하는 경우 <strong>which</strong>를 써야 합니다.
-                        이 구분을 혼동하여 오답을 선택한 경우가 2회 발견되었습니다.
+            <div style="margin-bottom: 18px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">사물/장소에 who 사용</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:100%; background:#dc2626;"></div></div>
+                        <span class="freq-count" style="color:#dc2626;">14회</span>
                     </div>
-                    <div class="type-example">
-                        <div><span class="wrong-text">The girl which is singing on the stage</span></div>
-                        <div><span class="correct-text">The girl who is singing on the stage</span></div>
-                        <br>
-                        <div><span class="wrong-text">A dictionary who explains how to use words</span></div>
-                        <div><span class="correct-text">A dictionary which explains how to use words</span></div>
+                    <span class="danger-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">관계사절 동사 수 불일치</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:57%; background:#dc2626;"></div></div>
+                        <span class="freq-count" style="color:#dc2626;">8회</span>
                     </div>
-                </li>
+                    <span class="danger-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">사람에 which 사용</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:43%; background:#f59e0b;"></div></div>
+                        <span class="freq-count" style="color:#f59e0b;">6회</span>
+                    </div>
+                    <span class="danger-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">주격/목적격(who/whom) 혼용</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:21%; background:#f59e0b;"></div></div>
+                        <span class="freq-count" style="color:#f59e0b;">3회</span>
+                    </div>
+                    <span class="danger-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">사람+사물 복합 선행사 처리</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:14%; background:#f59e0b;"></div></div>
+                        <span class="freq-count" style="color:#f59e0b;">2회</span>
+                    </div>
+                    <span class="danger-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">관계사절 위치(후치 수식)</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:7%; background:#94a3b8;"></div></div>
+                        <span class="freq-count" style="color:#94a3b8;">1회</span>
+                    </div>
+                    <span class="danger-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">소유격 whose 누락</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:7%; background:#94a3b8;"></div></div>
+                        <span class="freq-count" style="color:#94a3b8;">1회</span>
+                    </div>
+                    <span class="danger-stars">&#9733;&#9733;&#9734;&#9734;&#9734;</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="min-width:200px; font-size:0.88rem; font-weight:600; color:#1e293b;">가산/불가산 수량 표현</span>
+                    <div class="freq-bar-wrap" style="flex:1">
+                        <div class="freq-bar"><div class="freq-bar-fill" style="width:7%; background:#94a3b8;"></div></div>
+                        <span class="freq-count" style="color:#94a3b8;">1회</span>
+                    </div>
+                    <span class="danger-stars">&#9733;&#9733;&#9734;&#9734;&#9734;</span>
+                </div>
+            </div>
 
-                <li class="error-type-item critical">
-                    <div class="type-title">오류 유형 2: 관계대명사 뒤 동사의 수 일치 (1회 발생)</div>
-                    <div class="type-desc">
-                        주격 관계대명사 뒤에 오는 동사는 <strong>선행사의 수</strong>에 일치시켜야 합니다.
-                        선행사가 단수이면 단수 동사, 복수이면 복수 동사를 사용합니다.
-                    </div>
-                    <div class="type-example">
-                        <div><span class="wrong-text">The boy who sing a song every night</span></div>
-                        <div><span class="correct-text">The boy who sings a song every night</span></div>
-                        <div style="margin-top:6px; font-size:0.82rem; color:#64748b;">"The boy"는 단수 → sings (3인칭 단수 -s)</div>
-                    </div>
-                </li>
-
-                <li class="error-type-item warning">
-                    <div class="type-title">오류 유형 3: 복합 문장에서 관계대명사절 경계 파악 어려움 (1회 발생)</div>
-                    <div class="type-desc">
-                        문장이 길어지면 관계대명사절이 어디서 시작하고 끝나는지 파악하기 어려워져,
-                        동사 형태나 관계대명사 선택에서 실수가 발생합니다.
-                    </div>
-                    <div class="type-example">
-                        <div>The company <strong>which</strong> makes products <strong>[that are]</strong> sold to many countries...</div>
-                        <div style="margin-top:6px; font-size:0.82rem; color:#64748b;">관계대명사절의 범위를 [ ]로 표시하여 구조를 파악하는 연습이 필요합니다.</div>
-                    </div>
-                </li>
-            </ul>
+            <div style="padding:12px 16px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca; font-size:0.88rem; color:#991b1b;">
+                <strong>진단:</strong> "사물/장소에 who 사용" 오류가 14회로 가장 치명적인 약점입니다. house, statue, church, dog, wand, book 등 무생물에 who를 쓰는 실수가 반복되고 있습니다. 동사 수 불일치(8회)도 위험 수준입니다.
+            </div>
         </div>
 
-        <!-- 학습 가이드 -->
+        <!-- 단계별 학습 로드맵 -->
         <div class="card">
-            <h2>맞춤 학습 가이드</h2>
+            <h2>단계별 학습 로드맵</h2>
 
-            <div class="guide-step">
-                <div class="step-num">1</div>
-                <div class="step-content">
-                    <div class="step-title">선행사 판별 연습 (최우선)</div>
-                    <div class="step-desc">문장에서 관계대명사 앞의 선행사가 사람인지 사물인지 빠르게 판별하는 연습을 하세요. 선행사에 밑줄을 긋고 "사람 → who", "사물 → which"를 적용해 보세요.</div>
+            <div class="roadmap-step">
+                <div class="roadmap-badge" style="background:#dc2626;">1</div>
+                <div class="roadmap-content">
+                    <div class="rm-period">STEP 1 (1~2일)</div>
+                    <div class="rm-title">선행사 분류 훈련</div>
+                    <div class="rm-desc">문장에서 선행사를 사람 / 사물/장소 / 복합 3가지로 분류하는 눈 키우기. 선행사에 밑줄 긋고 분류 표에 적기.<br>예) dog → 사물, person → 사람, church → 사물</div>
+                    <div class="rm-goal">완료 기준: 선행사 분류를 1초 안에 할 수 있을 때까지</div>
                 </div>
             </div>
-            <div class="guide-step">
-                <div class="step-num">2</div>
-                <div class="step-content">
-                    <div class="step-title">수 일치 체크리스트</div>
-                    <div class="step-desc">관계대명사 문장을 만들 때 "선행사 확인 → 단수/복수 판단 → 동사 형태 결정" 3단계 체크리스트를 사용하세요.</div>
+
+            <div class="roadmap-step">
+                <div class="roadmap-badge" style="background:#f59e0b;">2</div>
+                <div class="roadmap-content">
+                    <div class="rm-period">STEP 2 (3~4일)</div>
+                    <div class="rm-title">관계대명사 선택 드릴</div>
+                    <div class="rm-desc">선행사 분류 → who / which / that 자동 대응. 복합 선행사(사람+사물)는 반드시 that. 빈칸 채우기 20문장/일, 오답은 소리 내어 3회 읽기.</div>
+                    <div class="rm-goal">완료 기준: 정답률 90% 이상</div>
                 </div>
             </div>
-            <div class="guide-step">
-                <div class="step-num">3</div>
-                <div class="step-content">
-                    <div class="step-title">문장 구조 분석 연습</div>
-                    <div class="step-desc">긴 문장에서 관계대명사절에 괄호를 치는 연습을 하세요. 주절과 관계대명사절을 분리하면 구조가 명확해집니다.</div>
+
+            <div class="roadmap-step">
+                <div class="roadmap-badge" style="background:#f59e0b;">3</div>
+                <div class="roadmap-content">
+                    <div class="rm-period">STEP 3 (5~6일)</div>
+                    <div class="rm-title">동사 수 일치 집중 훈련</div>
+                    <div class="rm-desc">관계사절 안 동사를 선행사 수에 맞추는 훈련. 선행사에 동그라미 → 단수/복수 표시 → 동사 확인.<br>예) dogs(복수) which [are/is] → are</div>
+                    <div class="rm-goal">완료 기준: 수 불일치 오류 0개</div>
                 </div>
             </div>
-            <div class="guide-step">
-                <div class="step-num">4</div>
-                <div class="step-content">
-                    <div class="step-title">that의 만능성 기억하기</div>
-                    <div class="step-desc"><strong>that</strong>은 사람/사물 모두에 사용 가능합니다. who/which 선택이 헷갈릴 때 that을 쓸 수 있다는 것을 기억하되, who/which 구분 능력도 함께 기르세요.</div>
+
+            <div class="roadmap-step">
+                <div class="roadmap-badge" style="background:#2563eb;">4</div>
+                <div class="roadmap-content">
+                    <div class="rm-period">STEP 4 (7일)</div>
+                    <div class="rm-title">관계사절 위치 훈련</div>
+                    <div class="rm-desc">관계사절은 선행사 바로 뒤에 위치해야 함. 문장 어순 교정 드릴 10문장.<br>→ The boy [who is cute] / not: The boy is cute who...</div>
+                    <div class="rm-goal">완료 기준: 위치 오류 0개</div>
                 </div>
+            </div>
+
+            <div class="roadmap-step">
+                <div class="roadmap-badge" style="background:#2563eb;">5</div>
+                <div class="roadmap-content">
+                    <div class="rm-period">STEP 5 (8일)</div>
+                    <div class="rm-title">주격 vs 목적격(who/whom) 정리</div>
+                    <div class="rm-desc">관계사 뒤가 동사이면 주격 who, 주어+동사이면 목적격 whom. who/whom 판별 10문제.<br>뒤에 동사 바로 오면 who, 주어+동사 오면 whom.</div>
+                    <div class="rm-goal">완료 기준: 혼용 오류 0개</div>
+                </div>
+            </div>
+
+            <div class="roadmap-step">
+                <div class="roadmap-badge" style="background:#16a34a;">6</div>
+                <div class="roadmap-content">
+                    <div class="rm-period">STEP 6 (9~10일)</div>
+                    <div class="rm-title">실전 문제 & 오답 복습</div>
+                    <div class="rm-desc">이 학습지 문제 재풀이 + 유사 문제 풀기. 틀린 문제만 다시 풀고, 오답 노트에 패턴 정리. 1주일 후 다시 풀어보기(망각 방지).</div>
+                    <div class="rm-goal">완료 기준: 전체 정답률 85% 이상</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 선생님의 한 줄 조언 -->
+        <div class="card">
+            <h2>선생님의 조언</h2>
+
+            <div class="advice-item">
+                <div class="advice-title">선행사 보는 습관</div>
+                <div class="advice-desc">관계대명사를 쓰기 전, 반드시 앞의 선행사를 먼저 확인하라. <strong>선행사가 사람이면 who, 사물이면 which</strong> — 이 한 가지만 지켜도 오류의 60%가 사라진다.</div>
+            </div>
+
+            <div class="advice-item">
+                <div class="advice-title">동사 수 일치 체크</div>
+                <div class="advice-desc">관계사절 안 동사를 쓸 때 관계대명사는 투명하게 보고, <strong>선행사에만 집중</strong>해서 수를 맞춰라. 'girls who ___' 라면 girls에 맞춰 <strong>are</strong>.</div>
+            </div>
+
+            <div class="advice-item">
+                <div class="advice-title">whom은 뒤에 주어+동사</div>
+                <div class="advice-desc">whom 뒤에는 반드시 '주어+동사'가 온다. <strong>whom 뒤에 동사가 바로 오면 100% 틀린 것</strong>이니 who로 바꿔라.</div>
+            </div>
+
+            <div class="advice-item">
+                <div class="advice-title">that은 만능 대체제</div>
+                <div class="advice-desc">사람+사물 혼합 선행사이거나 헷갈릴 때는 <strong>that</strong>을 쓰면 거의 항상 안전하다. 다만 <strong>전치사 뒤에는 that 불가</strong>.</div>
             </div>
         </div>
     </div>
@@ -806,6 +1182,13 @@
 </div>
 
 <script>
+    // 문제 토글
+    function toggleProblem(btn) {
+        btn.classList.toggle('open');
+        var detail = btn.nextElementSibling;
+        detail.classList.toggle('open');
+    }
+
     // 탭 전환
     function switchTab(tabId) {
         document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
