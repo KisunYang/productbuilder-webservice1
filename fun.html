@@ -333,14 +333,7 @@
                 </div>
             </div>
 
-            <div class="tarot-actions">
-                <button class="tarot-btn read" id="tarot-read-btn" onclick="readTarot()" disabled>🔮 타로 리딩</button>
-                <button class="tarot-btn reset" onclick="resetTarot()">↻ 다시 뽑기</button>
-            </div>
-
-            <div class="tarot-reading" id="tarot-reading"></div>
-
-            <!-- AI 해석 섹션 -->
+            <!-- AI 해석 섹션 (카드 3장 뽑으면 타로 리딩 버튼과 함께 표시) -->
             <div class="ai-section" id="ai-section">
                 <h3>🤖 AI에게 더 자세한 해석 받기</h3>
                 <p class="ai-hint">아래 해석 요청문을 복사한 뒤, 원하는 AI에 붙여넣어 보세요.</p>
@@ -352,6 +345,13 @@
                     <a class="ai-btn claude" href="https://claude.ai/" target="_blank" rel="noopener noreferrer">🧡 Claude</a>
                 </div>
             </div>
+
+            <div class="tarot-actions">
+                <button class="tarot-btn read" id="tarot-read-btn" onclick="readTarot()" disabled>🔮 타로 리딩</button>
+                <button class="tarot-btn reset" onclick="resetTarot()">↻ 다시 뽑기</button>
+            </div>
+
+            <div class="tarot-reading" id="tarot-reading"></div>
 
             <script>
             (function() {
@@ -479,6 +479,8 @@
                     drawOrder++;
                     if (drawOrder >= 3) {
                         document.getElementById('tarot-read-btn').disabled = false;
+                        // 3장 뽑기 완료 → AI 프롬프트 생성 및 표시
+                        setTimeout(function() { buildAiPrompt(); }, 300);
                     }
                 };
 
@@ -552,8 +554,12 @@
                     var readingEl = document.getElementById('tarot-reading');
                     readingEl.innerHTML = html;
                     readingEl.style.display = 'block';
+                    readingEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
 
-                    // AI 프롬프트 생성
+                // AI 프롬프트 생성 (카드 3장 뽑기 완료 시 호출)
+                window.buildAiPrompt = function() {
+                    var question = document.getElementById('tarot-question').value.trim();
                     var prompt = '당신은 전문 타로 리더입니다. 아래 질문과 뽑힌 3장의 타로 카드를 기반으로 자세하고 깊이 있는 타로 리딩을 해주세요.\n\n';
                     prompt += '【질문】\n' + question + '\n\n';
                     prompt += '【뽑힌 카드 (3-Card Spread: 과거-현재-미래)】\n';
@@ -572,8 +578,6 @@
                     document.getElementById('ai-section').style.display = 'block';
                     document.getElementById('ai-copy-btn').textContent = '📋 해석문구 복사';
                     document.getElementById('ai-copy-btn').classList.remove('copied');
-
-                    readingEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 };
 
                 window.copyAiPrompt = function() {
