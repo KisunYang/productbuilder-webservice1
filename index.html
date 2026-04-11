@@ -27,10 +27,25 @@
             flex-shrink: 0;
         }
 
+        .home-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+        .home-btn:hover { background: rgba(255,255,255,0.35); }
+
         header h1 {
             font-size: 1.15rem;
             font-weight: 700;
             letter-spacing: -0.3px;
+            flex: 1;
         }
 
         .main-layout {
@@ -58,9 +73,7 @@
             padding: 0 16px 8px;
         }
 
-        .subject-group {
-            margin-bottom: 4px;
-        }
+        .subject-group { margin-bottom: 4px; }
 
         .subject-header {
             display: flex;
@@ -75,9 +88,7 @@
             user-select: none;
         }
         .subject-header:hover { background: #f7fafc; }
-
         .subject-header .icon { font-size: 1.1rem; }
-
         .subject-header .arrow {
             margin-left: auto;
             font-size: 0.7rem;
@@ -86,10 +97,7 @@
         }
         .subject-group.open .arrow { transform: rotate(90deg); }
 
-        .topic-list {
-            display: none;
-            padding-left: 0;
-        }
+        .topic-list { display: none; padding-left: 0; }
         .subject-group.open .topic-list { display: block; }
 
         .topic-item {
@@ -127,10 +135,7 @@
             gap: 8px;
         }
 
-        .breadcrumb {
-            font-size: 0.85rem;
-            color: #718096;
-        }
+        .breadcrumb { font-size: 0.85rem; color: #718096; }
         .breadcrumb span { color: #a0aec0; margin: 0 6px; }
         .breadcrumb strong { color: #2d3748; }
 
@@ -147,77 +152,167 @@
             display: block;
         }
 
+        /* 웰컴 + 대시보드 */
         .welcome-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             height: 100%;
-            color: #a0aec0;
-            text-align: center;
-            gap: 12px;
+            color: #2d3748;
+            overflow-y: auto;
+            padding: 24px 20px;
         }
-        .welcome-screen .big-icon { font-size: 4rem; }
-        .welcome-screen h2 { font-size: 1.2rem; color: #718096; font-weight: 600; }
-        .welcome-screen p { font-size: 0.9rem; }
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .welcome-header .big-icon { font-size: 3.5rem; }
+        .welcome-header h2 { font-size: 1.2rem; color: #718096; font-weight: 600; margin-top: 8px; }
+        .welcome-header p { font-size: 0.88rem; color: #a0aec0; margin-top: 4px; }
 
-        /* 스크롤바 스타일 */
+        .dashboard {
+            width: 100%;
+            max-width: 760px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 16px;
+        }
+
+        .dash-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        .dash-card h3 {
+            font-size: 0.95rem;
+            color: #1e293b;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 최신 소식 */
+        .news-list { list-style: none; }
+        .news-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+        }
+        .news-item:last-child { border-bottom: none; }
+        .news-date {
+            color: #94a3b8;
+            font-size: 0.78rem;
+            white-space: nowrap;
+            min-width: 68px;
+        }
+        .news-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+        .news-badge.new { background: #dbeafe; color: #2563eb; }
+        .news-badge.update { background: #fef3c7; color: #d97706; }
+
+        /* 학습 현황 */
+        .study-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .stat-box {
+            text-align: center;
+            padding: 12px 8px;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+        .stat-box .stat-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+        .stat-box .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* 학습 목록 */
+        .study-list { list-style: none; }
+        .study-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+        }
+        .study-item:last-child { border-bottom: none; }
+        .study-check {
+            width: 18px; height: 18px;
+            border-radius: 4px;
+            border: 2px solid #cbd5e0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .study-check.done {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+        .study-name { flex: 1; color: #334155; }
+        .study-count {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        /* 스크롤바 */
         .sidebar::-webkit-scrollbar { width: 4px; }
         .sidebar::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+        .welcome-screen::-webkit-scrollbar { width: 4px; }
+        .welcome-screen::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
 
-        /* 모바일 반응형 */
+        /* 모바일 */
         @media (max-width: 640px) {
             body { height: auto; min-height: 100vh; }
-
             header h1 { font-size: 0.95rem; }
-
-            .main-layout {
-                flex-direction: column;
-                overflow: visible;
-            }
-
+            .home-btn { padding: 5px 10px; font-size: 0.78rem; }
+            .main-layout { flex-direction: column; overflow: visible; }
             .sidebar {
-                width: 100%;
-                min-width: unset;
-                border-right: none;
-                border-bottom: 1px solid #e2e8f0;
-                padding: 8px 0;
-                overflow-y: visible;
+                width: 100%; min-width: unset;
+                border-right: none; border-bottom: 1px solid #e2e8f0;
+                padding: 8px 0; overflow-y: visible;
             }
-
             .sidebar-title { padding: 6px 12px 4px; }
-
             .subject-group { margin-bottom: 0; }
-
-            .subject-header {
-                padding: 8px 12px;
-                font-size: 0.9rem;
-            }
-
-            .topic-item {
-                padding: 7px 12px 7px 32px;
-                font-size: 0.85rem;
-            }
-
+            .subject-header { padding: 8px 12px; font-size: 0.9rem; }
+            .topic-item { padding: 7px 12px 7px 32px; font-size: 0.85rem; }
             .content-area { overflow: visible; }
-
-            .content-frame-wrap {
-                overflow: visible;
-                height: auto;
-            }
-
-            #content-iframe {
-                height: 70vh;
-                min-height: 400px;
-            }
-
-            .welcome-screen { padding: 40px 16px; height: auto; }
+            .content-frame-wrap { overflow: visible; height: auto; }
+            #content-iframe { height: 70vh; min-height: 400px; }
+            .welcome-screen { padding: 16px 12px; height: auto; }
+            .dashboard { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
 <header>
+    <button class="home-btn" onclick="goHome()">🏠 홈</button>
     <h1>🔭 중학생이 개념을 그림과 상호작용으로 이해하는 학습 사이트</h1>
 </header>
 
@@ -307,6 +402,7 @@
                 <a class="topic-item" href="#" data-src="fun.html#lotto" data-subject="Fun" data-topic="로또 번호 생성기">🎱 로또 번호 생성기</a>
                 <a class="topic-item" href="#" data-src="fun.html#menu" data-subject="Fun" data-topic="오늘 저녁 뭐 먹지?">🍽️ 오늘 저녁 뭐 먹지?</a>
                 <a class="topic-item" href="#" data-src="fun.html#arts" data-subject="Fun" data-topic="Google Arts &amp; Culture">🎨 Google Arts &amp; Culture</a>
+                <a class="topic-item" href="#" data-src="fun.html#tarot" data-subject="Fun" data-topic="타로 카드">🔮 타로 카드</a>
                 <a class="topic-item" href="#" data-src="fun.html#contact" data-subject="Fun" data-topic="제휴 문의">🤝 제휴 문의</a>
                 <a class="topic-item" href="#" data-src="fun.html#comments" data-subject="Fun" data-topic="댓글">💬 댓글</a>
             </div>
@@ -326,9 +422,62 @@
 
         <div class="content-frame-wrap">
             <div class="welcome-screen" id="welcome-screen">
-                <div class="big-icon">🔭</div>
-                <h2>학습할 주제를 선택하세요</h2>
-                <p id="welcome-hint">왼쪽 메뉴에서 과목과 단원을 클릭하면<br>학습 내용이 여기에 표시됩니다.</p>
+                <div class="welcome-header">
+                    <div class="big-icon">🔭</div>
+                    <h2>학습할 주제를 선택하세요</h2>
+                    <p id="welcome-hint">왼쪽 메뉴에서 과목과 단원을 클릭하면 학습 내용이 여기에 표시됩니다.</p>
+                </div>
+
+                <div class="dashboard">
+                    <!-- 최신 소식 -->
+                    <div class="dash-card">
+                        <h3>📢 최신 업데이트</h3>
+                        <ul class="news-list">
+                            <li class="news-item">
+                                <span class="news-date">2026.04.11</span>
+                                <div><span class="news-badge new">NEW</span> 영어 - 주격 관계대명사 퀴즈 분석 페이지 추가</div>
+                            </li>
+                            <li class="news-item">
+                                <span class="news-date">2026.04.11</span>
+                                <div><span class="news-badge new">NEW</span> Fun - 타로 카드 게임 추가</div>
+                            </li>
+                            <li class="news-item">
+                                <span class="news-date">2026.04.10</span>
+                                <div><span class="news-badge new">NEW</span> 과학 - 끓는 점 학습 페이지 추가</div>
+                            </li>
+                            <li class="news-item">
+                                <span class="news-date">2026.04.08</span>
+                                <div><span class="news-badge update">UPDATE</span> 사이트 구조 개편 및 Fun 메뉴 추가</div>
+                            </li>
+                            <li class="news-item">
+                                <span class="news-date">2026.04.05</span>
+                                <div><span class="news-badge new">NEW</span> 과학 - 용해도 학습 페이지 추가</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 학습 현황 -->
+                    <div class="dash-card">
+                        <h3>📊 학습 현황</h3>
+                        <div class="study-stats">
+                            <div class="stat-box">
+                                <div class="stat-val" style="color:#2563eb;" id="stat-total">3</div>
+                                <div class="stat-label">전체 학습</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-val" style="color:#16a34a;" id="stat-done">0</div>
+                                <div class="stat-label">완료</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-val" style="color:#d97706;" id="stat-reviews">0</div>
+                                <div class="stat-label">총 복습 횟수</div>
+                            </div>
+                        </div>
+                        <ul class="study-list" id="study-list">
+                            <!-- JS로 채워짐 -->
+                        </ul>
+                    </div>
+                </div>
             </div>
             <iframe id="content-iframe" style="display:none" title="학습 콘텐츠"></iframe>
         </div>
@@ -337,47 +486,123 @@
 </div>
 
 <script>
+    // 학습 페이지 목록 (key: localStorage 키, name: 표시명, src: 경로)
+    var STUDY_PAGES = [
+        { key: 'science-1-solubility', name: '과학 - 용해도', src: 'souhogisim/science-1-solubility.html' },
+        { key: 'science-2-boiling-point', name: '과학 - 끓는 점', src: 'souhogisim/science-2-boiling-point.html' },
+        { key: 'english-1-relative-pronoun', name: '영어 - 주격 관계대명사', src: 'souhogisim/english-1-relative-pronoun-quiz.html' }
+    ];
+
+    // localStorage 헬퍼
+    function getStudyData() {
+        try { return JSON.parse(localStorage.getItem('studyData')) || {}; } catch(e) { return {}; }
+    }
+    function saveStudyData(data) {
+        localStorage.setItem('studyData', JSON.stringify(data));
+    }
+
+    // 복습 횟수 증가
+    function recordVisit(src) {
+        var data = getStudyData();
+        var page = STUDY_PAGES.find(function(p) { return src.indexOf(p.src) !== -1; });
+        if (!page) return;
+        if (!data[page.key]) data[page.key] = { visits: 0, done: false };
+        data[page.key].visits++;
+        saveStudyData(data);
+    }
+
+    // 학습 완료 토글
+    function toggleDone(key) {
+        var data = getStudyData();
+        if (!data[key]) data[key] = { visits: 0, done: false };
+        data[key].done = !data[key].done;
+        saveStudyData(data);
+        renderDashboard();
+    }
+
+    // 대시보드 렌더링
+    function renderDashboard() {
+        var data = getStudyData();
+        var totalReviews = 0;
+        var doneCount = 0;
+        var listEl = document.getElementById('study-list');
+        listEl.innerHTML = '';
+
+        STUDY_PAGES.forEach(function(page) {
+            var d = data[page.key] || { visits: 0, done: false };
+            totalReviews += d.visits;
+            if (d.done) doneCount++;
+
+            var li = document.createElement('li');
+            li.className = 'study-item';
+            li.innerHTML =
+                '<div class="study-check ' + (d.done ? 'done' : '') + '" onclick="toggleDone(\'' + page.key + '\')">' +
+                    (d.done ? '&#10003;' : '') +
+                '</div>' +
+                '<span class="study-name">' + page.name + '</span>' +
+                '<span class="study-count">복습 ' + d.visits + '회</span>';
+            listEl.appendChild(li);
+        });
+
+        document.getElementById('stat-total').textContent = STUDY_PAGES.length;
+        document.getElementById('stat-done').textContent = doneCount;
+        document.getElementById('stat-reviews').textContent = totalReviews;
+    }
+
+    // 홈으로 돌아가기
+    function goHome() {
+        var iframe = document.getElementById('content-iframe');
+        var welcome = document.getElementById('welcome-screen');
+        iframe.style.display = 'none';
+        iframe.src = '';
+        welcome.style.display = 'flex';
+        document.getElementById('breadcrumb-bar').style.display = 'none';
+        document.querySelectorAll('.topic-item').forEach(function(t) { t.classList.remove('active'); });
+        renderDashboard();
+    }
+
     function toggleGroup(id) {
-        const group = document.getElementById(id);
+        var group = document.getElementById(id);
         group.classList.toggle('open');
     }
 
     document.querySelectorAll('.topic-item:not(.coming-soon)').forEach(function(item) {
         item.addEventListener('click', function(e) {
             e.preventDefault();
-            const src = this.dataset.src;
-            const subject = this.dataset.subject;
-            const topic = this.dataset.topic;
+            var src = this.dataset.src;
+            var subject = this.dataset.subject;
+            var topic = this.dataset.topic;
 
-            // 활성 표시
             document.querySelectorAll('.topic-item').forEach(function(t) { t.classList.remove('active'); });
             this.classList.add('active');
 
-            // 브레드크럼
             document.getElementById('bc-subject').textContent = subject;
             document.getElementById('bc-topic').textContent = topic;
             document.getElementById('breadcrumb-bar').style.display = 'flex';
 
-            // iframe 로드
-            const iframe = document.getElementById('content-iframe');
-            const welcome = document.getElementById('welcome-screen');
+            var iframe = document.getElementById('content-iframe');
+            var welcome = document.getElementById('welcome-screen');
             iframe.src = src;
             iframe.style.display = 'block';
             welcome.style.display = 'none';
+
+            // 복습 횟수 기록
+            recordVisit(src);
         });
     });
 
     document.querySelectorAll('.topic-item.coming-soon').forEach(function(item) {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-        });
+        item.addEventListener('click', function(e) { e.preventDefault(); });
     });
 
-    // 모바일 환영 문구 변경
+    // 모바일 환영 문구
     if (window.matchMedia('(max-width: 640px)').matches) {
         var hint = document.getElementById('welcome-hint');
-        if (hint) hint.innerHTML = '위쪽 메뉴에서 과목과 단원을 클릭하면<br>학습 내용이 여기에 표시됩니다.';
+        if (hint) hint.textContent = '위쪽 메뉴에서 과목과 단원을 클릭하면 학습 내용이 여기에 표시됩니다.';
     }
+
+    // 초기 대시보드 렌더링
+    renderDashboard();
 </script>
 
 </body>
