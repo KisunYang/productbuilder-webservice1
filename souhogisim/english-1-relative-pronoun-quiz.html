@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영어 주격 관계대명사 - 퀴즈 분석</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f7f8fc;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+
+        /* 헤더 */
+        .page-header {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            padding: 28px 32px;
+            border-radius: 16px;
+            margin-bottom: 28px;
+        }
+        .page-header h1 { font-size: 1.5rem; margin-bottom: 6px; }
+        .page-header .subtitle { font-size: 0.9rem; opacity: 0.85; }
+        .page-header .meta {
+            margin-top: 12px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 0.82rem;
+            opacity: 0.8;
+        }
+        .page-header .meta span { background: rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 20px; }
+
+        /* 탭 네비게이션 */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #2563eb;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .tab-btn:hover:not(.active) { color: #334155; }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* 카드 */
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+        }
+        .card h2 {
+            font-size: 1.15rem;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card h3 {
+            font-size: 1rem;
+            color: #334155;
+            margin: 18px 0 10px;
+        }
+
+        /* 퀴즈 이미지 뷰어 */
+        .image-viewer {
+            text-align: center;
+        }
+        .image-viewer .page-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .image-viewer .page-tab {
+            padding: 8px 24px;
+            border: 2px solid #2563eb;
+            background: white;
+            color: #2563eb;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .image-viewer .page-tab.active {
+            background: #2563eb;
+            color: white;
+        }
+        .image-viewer img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        /* 성적 요약 */
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .score-card {
+            text-align: center;
+            padding: 18px 12px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .score-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .score-card .label { font-size: 0.8rem; color: #64748b; }
+        .score-card.total .value { color: #2563eb; }
+        .score-card.correct .value { color: #16a34a; }
+        .score-card.wrong .value { color: #dc2626; }
+        .score-card.rate .value { color: #d97706; }
+
+        /* 오류 분석 테이블 */
+        .error-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.88rem;
+        }
+        .error-table th {
+            background: #f1f5f9;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .error-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+        .error-table tr:hover { background: #f8fafc; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .badge-red { background: #fef2f2; color: #dc2626; }
+        .badge-green { background: #f0fdf4; color: #16a34a; }
+        .badge-yellow { background: #fffbeb; color: #d97706; }
+
+        /* 오류 유형 분석 */
+        .error-type-list { list-style: none; }
+        .error-type-item {
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+        }
+        .error-type-item.critical {
+            background: #fef2f2;
+            border-left-color: #dc2626;
+        }
+        .error-type-item.warning {
+            background: #fffbeb;
+            border-left-color: #d97706;
+        }
+        .error-type-item .type-title {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+        .error-type-item .type-desc {
+            font-size: 0.88rem;
+            color: #475569;
+        }
+        .error-type-item .type-example {
+            margin-top: 8px;
+            background: rgba(255,255,255,0.7);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        .error-type-item .type-example .wrong-text {
+            color: #dc2626;
+            text-decoration: line-through;
+        }
+        .error-type-item .type-example .correct-text {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        /* 개념 정리 */
+        .concept-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .concept-box h3 {
+            color: #1d4ed8;
+            margin-bottom: 10px;
+        }
+        .concept-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.88rem;
+        }
+        .concept-table th, .concept-table td {
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid #dbeafe;
+        }
+        .concept-table th {
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 700;
+        }
+        .concept-table td { background: white; }
+
+        /* 연습 문제 */
+        .practice-q {
+            padding: 16px;
+            border-radius: 10px;
+            background: #f8fafc;
+            margin-bottom: 14px;
+            border: 1px solid #e2e8f0;
+        }
+        .practice-q .q-text {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+        .practice-q .options { display: flex; flex-direction: column; gap: 6px; }
+        .practice-q .option-btn {
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.15s;
+        }
+        .practice-q .option-btn:hover { border-color: #2563eb; background: #eff6ff; }
+        .practice-q .option-btn.selected-correct {
+            border-color: #16a34a;
+            background: #f0fdf4;
+            color: #16a34a;
+            font-weight: 600;
+        }
+        .practice-q .option-btn.selected-wrong {
+            border-color: #dc2626;
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .practice-q .option-btn.show-correct {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        .practice-q .explanation {
+            display: none;
+            margin-top: 10px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .practice-q .explanation.show { display: block; }
+        .practice-q .explanation.correct-exp {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+        .practice-q .explanation.wrong-exp {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        /* 학습 가이드 */
+        .guide-step {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .guide-step .step-num {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .guide-step .step-content { flex: 1; }
+        .guide-step .step-title { font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+        .guide-step .step-desc { font-size: 0.88rem; color: #475569; }
+
+        /* 프로그레스 바 */
+        .progress-bar-wrap {
+            background: #e2e8f0;
+            border-radius: 20px;
+            height: 12px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s;
+        }
+
+        /* 반응형 */
+        @media (max-width: 640px) {
+            .page-container { padding: 12px 10px 40px; }
+            .page-header { padding: 20px; border-radius: 12px; }
+            .page-header h1 { font-size: 1.2rem; }
+            .card { padding: 16px; border-radius: 10px; }
+            .tab-btn { font-size: 0.78rem; padding: 10px 4px; }
+            .score-summary { grid-template-columns: repeat(2, 1fr); }
+            .error-table { font-size: 0.8rem; }
+            .error-table th, .error-table td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+
+    <!-- 헤더 -->
+    <div class="page-header">
+        <h1>PATTERN 2: 주격 관계대명사 - 퀴즈 오류 분석</h1>
+        <div class="subtitle">Subjective Relative Pronouns (who / which / that) Quiz Analysis</div>
+        <div class="meta">
+            <span>중2 NE능률 (김성곤)</span>
+            <span>EXAM4YOU</span>
+            <span>2026.04.11</span>
+        </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('quiz')">시험지 보기</button>
+        <button class="tab-btn" onclick="switchTab('analysis')">오류 분석</button>
+        <button class="tab-btn" onclick="switchTab('concept')">개념 정리</button>
+        <button class="tab-btn" onclick="switchTab('practice')">연습 문제</button>
+    </div>
+
+    <!-- 탭 1: 시험지 보기 -->
+    <div class="tab-panel active" id="tab-quiz">
+        <div class="card">
+            <h2>시험지 원본</h2>
+            <div class="image-viewer">
+                <div class="page-tabs">
+                    <button class="page-tab active" onclick="switchPage(1)">1 Page</button>
+                    <button class="page-tab" onclick="switchPage(2)">2 Page</button>
+                </div>
+                <div id="quiz-page-1">
+                    <img src="../sou-quiz-report/2026.4.11 quiz eng/1page.jpg" alt="퀴즈 1페이지">
+                </div>
+                <div id="quiz-page-2" style="display:none">
+                    <img src="../sou-quiz-report/2026.4.11 quiz eng/2page.jpg" alt="퀴즈 2페이지">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 탭 2: 오류 분석 -->
+    <div class="tab-panel" id="tab-analysis">
+
+        <!-- 성적 요약 -->
+        <div class="card">
+            <h2>성적 요약</h2>
+            <div class="score-summary">
+                <div class="score-card total">
+                    <div class="value">10</div>
+                    <div class="label">전체 문항</div>
+                </div>
+                <div class="score-card correct">
+                    <div class="value">6</div>
+                    <div class="label">정답</div>
+                </div>
+                <div class="score-card wrong">
+                    <div class="value">4</div>
+                    <div class="label">오답</div>
+                </div>
+                <div class="score-card rate">
+                    <div class="value">60%</div>
+                    <div class="label">정답률</div>
+                </div>
+            </div>
+            <div style="margin-top:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#64748b; margin-bottom:4px;">
+                    <span>정답률</span><span>60%</span>
+                </div>
+                <div class="progress-bar-wrap">
+                    <div class="progress-bar-fill" style="width:60%; background: linear-gradient(90deg, #f59e0b, #d97706);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 문항별 분석 -->
+        <div class="card">
+            <h2>문항별 결과</h2>
+            <table class="error-table">
+                <thead>
+                    <tr>
+                        <th>문항</th>
+                        <th>결과</th>
+                        <th>유형</th>
+                        <th>오류 내용</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1번</td>
+                        <td><span class="badge badge-green">정답</span></td>
+                        <td>who 사용</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>2번</td>
+                        <td><span class="badge badge-green">정답</span></td>
+                        <td>who 사용</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>3번</td>
+                        <td><span class="badge badge-red">오답</span></td>
+                        <td>who/which 혼동</td>
+                        <td>사람 선행사에 which 사용</td>
+                    </tr>
+                    <tr>
+                        <td>4번</td>
+                        <td><span class="badge badge-green">정답</span></td>
+                        <td>어색한 문장 찾기</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>5번</td>
+                        <td><span class="badge badge-red">오답</span></td>
+                        <td>관계대명사 + 동사 수일치</td>
+                        <td>선행사의 수에 동사를 일치시키지 못함</td>
+                    </tr>
+                    <tr>
+                        <td>6번</td>
+                        <td><span class="badge badge-green">정답</span></td>
+                        <td>which 사용 (2개 고르기)</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>7번</td>
+                        <td><span class="badge badge-red">오답</span></td>
+                        <td>which/who 구별</td>
+                        <td>사물 선행사에 who 사용</td>
+                    </tr>
+                    <tr>
+                        <td>8번</td>
+                        <td><span class="badge badge-green">정답</span></td>
+                        <td>복합 문장</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>72번</td>
+                        <td><span class="badge badge-green">정답</span></td>
+                        <td>올바른 짝 찾기</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>73번</td>
+                        <td><span class="badge badge-red">오답</span></td>
+                        <td>올바른 짝 찾기</td>
+                        <td>관계대명사 뒤 동사 형태 판별 실수</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 오류 유형 분석 -->
+        <div class="card">
+            <h2>핵심 오류 유형 분석</h2>
+
+            <ul class="error-type-list">
+                <li class="error-type-item critical">
+                    <div class="type-title">오류 유형 1: who와 which 혼동 (2회 발생)</div>
+                    <div class="type-desc">
+                        사람을 선행사로 하는 경우 <strong>who</strong>, 사물/동물을 선행사로 하는 경우 <strong>which</strong>를 써야 합니다.
+                        이 구분을 혼동하여 오답을 선택한 경우가 2회 발견되었습니다.
+                    </div>
+                    <div class="type-example">
+                        <div><span class="wrong-text">The girl which is singing on the stage</span></div>
+                        <div><span class="correct-text">The girl who is singing on the stage</span></div>
+                        <br>
+                        <div><span class="wrong-text">A dictionary who explains how to use words</span></div>
+                        <div><span class="correct-text">A dictionary which explains how to use words</span></div>
+                    </div>
+                </li>
+
+                <li class="error-type-item critical">
+                    <div class="type-title">오류 유형 2: 관계대명사 뒤 동사의 수 일치 (1회 발생)</div>
+                    <div class="type-desc">
+                        주격 관계대명사 뒤에 오는 동사는 <strong>선행사의 수</strong>에 일치시켜야 합니다.
+                        선행사가 단수이면 단수 동사, 복수이면 복수 동사를 사용합니다.
+                    </div>
+                    <div class="type-example">
+                        <div><span class="wrong-text">The boy who sing a song every night</span></div>
+                        <div><span class="correct-text">The boy who sings a song every night</span></div>
+                        <div style="margin-top:6px; font-size:0.82rem; color:#64748b;">"The boy"는 단수 → sings (3인칭 단수 -s)</div>
+                    </div>
+                </li>
+
+                <li class="error-type-item warning">
+                    <div class="type-title">오류 유형 3: 복합 문장에서 관계대명사절 경계 파악 어려움 (1회 발생)</div>
+                    <div class="type-desc">
+                        문장이 길어지면 관계대명사절이 어디서 시작하고 끝나는지 파악하기 어려워져,
+                        동사 형태나 관계대명사 선택에서 실수가 발생합니다.
+                    </div>
+                    <div class="type-example">
+                        <div>The company <strong>which</strong> makes products <strong>[that are]</strong> sold to many countries...</div>
+                        <div style="margin-top:6px; font-size:0.82rem; color:#64748b;">관계대명사절의 범위를 [ ]로 표시하여 구조를 파악하는 연습이 필요합니다.</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 학습 가이드 -->
+        <div class="card">
+            <h2>맞춤 학습 가이드</h2>
+
+            <div class="guide-step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <div class="step-title">선행사 판별 연습 (최우선)</div>
+                    <div class="step-desc">문장에서 관계대명사 앞의 선행사가 사람인지 사물인지 빠르게 판별하는 연습을 하세요. 선행사에 밑줄을 긋고 "사람 → who", "사물 → which"를 적용해 보세요.</div>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <div class="step-title">수 일치 체크리스트</div>
+                    <div class="step-desc">관계대명사 문장을 만들 때 "선행사 확인 → 단수/복수 판단 → 동사 형태 결정" 3단계 체크리스트를 사용하세요.</div>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <div class="step-title">문장 구조 분석 연습</div>
+                    <div class="step-desc">긴 문장에서 관계대명사절에 괄호를 치는 연습을 하세요. 주절과 관계대명사절을 분리하면 구조가 명확해집니다.</div>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <div class="step-title">that의 만능성 기억하기</div>
+                    <div class="step-desc"><strong>that</strong>은 사람/사물 모두에 사용 가능합니다. who/which 선택이 헷갈릴 때 that을 쓸 수 있다는 것을 기억하되, who/which 구분 능력도 함께 기르세요.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 탭 3: 개념 정리 -->
+    <div class="tab-panel" id="tab-concept">
+
+        <div class="card">
+            <h2>주격 관계대명사란?</h2>
+            <p style="margin-bottom:14px; font-size:0.92rem; color:#475569;">
+                두 문장을 하나로 연결할 때, 관계대명사절 안에서 <strong>주어 역할</strong>을 하는 관계대명사입니다.<br>
+                선행사(앞에 나오는 명사)의 종류에 따라 <strong>who, which, that</strong>을 사용합니다.
+            </p>
+
+            <div class="concept-box">
+                <h3>기본 규칙</h3>
+                <table class="concept-table">
+                    <thead>
+                        <tr>
+                            <th>선행사</th>
+                            <th>관계대명사</th>
+                            <th>예문</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>사람</strong></td>
+                            <td><strong>who</strong> / that</td>
+                            <td>I have a friend <strong>who</strong> lives in Seoul.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>동물 / 사물</strong></td>
+                            <td><strong>which</strong> / that</td>
+                            <td>I read a book <strong>which</strong> was interesting.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>사람 + 사물</strong></td>
+                            <td><strong>that</strong></td>
+                            <td>The boy and his dog <strong>that</strong> are running...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>주격 관계대명사 만드는 방법</h2>
+
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px; margin-bottom:16px;">
+                <h3 style="color:#166534; margin-top:0;">Step 1: 공통 부분 찾기</h3>
+                <div style="font-size:0.9rem; color:#475569;">
+                    <p>I know <strong style="color:#2563eb">a girl</strong>. + <strong style="color:#2563eb">She</strong> can play the piano.</p>
+                    <p style="margin-top:4px; color:#64748b;">→ "a girl"과 "She"가 같은 사람</p>
+                </div>
+            </div>
+
+            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px;">
+                <h3 style="color:#1d4ed8; margin-top:0;">Step 2: 관계대명사로 바꾸기</h3>
+                <div style="font-size:0.9rem; color:#475569;">
+                    <p>뒤 문장의 주어(She)를 관계대명사(who)로 바꿉니다.</p>
+                    <p style="margin-top:4px;">She → <strong style="color:#2563eb">who</strong> (사람이므로 who)</p>
+                </div>
+            </div>
+
+            <div style="background:#fefce8; border:1px solid #fde68a; border-radius:10px; padding:16px;">
+                <h3 style="color:#a16207; margin-top:0;">Step 3: 연결하기</h3>
+                <div style="font-size:0.9rem; color:#475569;">
+                    <p>I know a girl <strong style="color:#2563eb">who can play the piano</strong>.</p>
+                    <p style="margin-top:4px; color:#64748b;">→ 선행사(a girl) 바로 뒤에 관계대명사절을 붙입니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>주의할 점</h2>
+
+            <div style="margin-bottom:16px; padding:14px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca;">
+                <h3 style="color:#dc2626; margin-top:0; font-size:0.95rem;">1. 동사의 수 일치</h3>
+                <p style="font-size:0.88rem; color:#475569;">
+                    관계대명사절의 동사는 <strong>선행사</strong>의 수에 맞춥니다.
+                </p>
+                <div style="margin-top:8px; font-size:0.88rem;">
+                    <div>The boy who <strong style="color:#16a34a">likes</strong> music... (단수 → likes)</div>
+                    <div>The boys who <strong style="color:#16a34a">like</strong> music... (복수 → like)</div>
+                </div>
+            </div>
+
+            <div style="padding:14px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca;">
+                <h3 style="color:#dc2626; margin-top:0; font-size:0.95rem;">2. 관계대명사 뒤에 주어를 또 쓰지 않기</h3>
+                <p style="font-size:0.88rem; color:#475569;">
+                    주격 관계대명사 자체가 주어이므로, 뒤에 주어를 다시 쓰면 안 됩니다.
+                </p>
+                <div style="margin-top:8px; font-size:0.88rem;">
+                    <div><span style="color:#dc2626; text-decoration:line-through;">The man who he is tall</span></div>
+                    <div><span style="color:#16a34a; font-weight:600;">The man who is tall</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 탭 4: 연습 문제 -->
+    <div class="tab-panel" id="tab-practice">
+
+        <div class="card">
+            <h2>연습 문제</h2>
+            <p style="font-size:0.88rem; color:#64748b; margin-bottom:18px;">
+                오류 분석 결과를 바탕으로 맞춤 연습 문제를 준비했습니다. 각 문제를 풀어보세요.
+            </p>
+
+            <!-- Q1 -->
+            <div class="practice-q" id="pq1">
+                <div class="q-text">Q1. 빈칸에 알맞은 관계대명사를 고르세요.<br>
+                    "I met a doctor _____ saved my life."
+                </div>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer('pq1', this, false)">a) which</button>
+                    <button class="option-btn" onclick="checkAnswer('pq1', this, true)">b) who</button>
+                    <button class="option-btn" onclick="checkAnswer('pq1', this, false)">c) whom</button>
+                    <button class="option-btn" onclick="checkAnswer('pq1', this, false)">d) what</button>
+                </div>
+                <div class="explanation correct-exp">정답! 선행사 "a doctor"는 사람이므로 <strong>who</strong>를 사용합니다. who가 관계대명사절에서 주어(saved) 역할을 합니다.</div>
+                <div class="explanation wrong-exp">오답! 선행사 "a doctor"는 <strong>사람</strong>입니다. 사람에게는 <strong>who</strong>를 사용합니다. which는 사물/동물에 사용합니다.</div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="practice-q" id="pq2">
+                <div class="q-text">Q2. 다음 중 어법상 올바른 문장을 고르세요.</div>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer('pq2', this, false)">a) The cat who is on the roof is mine.</button>
+                    <button class="option-btn" onclick="checkAnswer('pq2', this, true)">b) The cat which is on the roof is mine.</button>
+                    <button class="option-btn" onclick="checkAnswer('pq2', this, false)">c) The cat whom is on the roof is mine.</button>
+                    <button class="option-btn" onclick="checkAnswer('pq2', this, false)">d) The cat what is on the roof is mine.</button>
+                </div>
+                <div class="explanation correct-exp">정답! "The cat"은 동물(사물)이므로 <strong>which</strong>를 사용합니다.</div>
+                <div class="explanation wrong-exp">오답! "The cat"은 동물입니다. 동물/사물 선행사에는 <strong>which</strong> 또는 <strong>that</strong>을 사용합니다. who는 사람에게만 씁니다.</div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="practice-q" id="pq3">
+                <div class="q-text">Q3. 밑줄 친 부분 중 어법상 틀린 것을 고르세요.<br>
+                    "The students who <u>attends</u> this school must wear uniforms."
+                </div>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer('pq3', this, false)">a) 올바른 문장이다.</button>
+                    <button class="option-btn" onclick="checkAnswer('pq3', this, true)">b) attends → attend</button>
+                    <button class="option-btn" onclick="checkAnswer('pq3', this, false)">c) who → which</button>
+                    <button class="option-btn" onclick="checkAnswer('pq3', this, false)">d) must → has to</button>
+                </div>
+                <div class="explanation correct-exp">정답! 선행사 "The students"는 <strong>복수</strong>이므로 동사도 복수형인 <strong>attend</strong>를 써야 합니다. attends(3인칭 단수)는 틀립니다.</div>
+                <div class="explanation wrong-exp">오답! 핵심은 <strong>수 일치</strong>입니다. 선행사 "The students"가 복수이므로 관계대명사절의 동사도 <strong>attend</strong>(복수형)로 써야 합니다.</div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="practice-q" id="pq4">
+                <div class="q-text">Q4. 빈칸에 알맞은 것을 고르세요.<br>
+                    "She has a brother _____ very handsome."
+                </div>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer('pq4', this, false)">a) which is</button>
+                    <button class="option-btn" onclick="checkAnswer('pq4', this, true)">b) who is</button>
+                    <button class="option-btn" onclick="checkAnswer('pq4', this, false)">c) who he is</button>
+                    <button class="option-btn" onclick="checkAnswer('pq4', this, false)">d) who are</button>
+                </div>
+                <div class="explanation correct-exp">정답! 선행사 "a brother"는 사람(단수)이므로 <strong>who is</strong>가 맞습니다. who가 주어 역할을 하므로 뒤에 he를 다시 쓰면 안 됩니다.</div>
+                <div class="explanation wrong-exp">오답! "a brother"는 <strong>사람(단수)</strong>입니다. 사람 → who, 단수 → is. "who he is"처럼 주어를 중복해서 쓸 수 없습니다.</div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="practice-q" id="pq5">
+                <div class="q-text">Q5. 다음 두 문장을 관계대명사를 사용하여 한 문장으로 만들 때, 올바른 것은?<br>
+                    "I bought a book. + It explains Korean history."
+                </div>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer('pq5', this, false)">a) I bought a book who explains Korean history.</button>
+                    <button class="option-btn" onclick="checkAnswer('pq5', this, false)">b) I bought a book which it explains Korean history.</button>
+                    <button class="option-btn" onclick="checkAnswer('pq5', this, true)">c) I bought a book which explains Korean history.</button>
+                    <button class="option-btn" onclick="checkAnswer('pq5', this, false)">d) I bought a book explains Korean history.</button>
+                </div>
+                <div class="explanation correct-exp">정답! "a book"은 사물이므로 <strong>which</strong>를 쓰고, which가 주어 역할을 하므로 it을 다시 쓰지 않습니다. 관계대명사(which)를 생략하면 안 됩니다 (주격이므로).</div>
+                <div class="explanation wrong-exp">오답! "a book"은 사물 → <strong>which</strong> (who 아님). 주격 관계대명사가 주어를 대신하므로 it을 중복 사용할 수 없고, 주격 관계대명사는 생략이 불가합니다.</div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="practice-q" id="pq6">
+                <div class="q-text">Q6. 다음 중 어법상 올바른 문장을 <strong>모두</strong> 고르세요.<br>
+                    a) A movie star that is famous disappeared.<br>
+                    b) The children who was eating apples were late.<br>
+                    c) The bus which goes to the airport runs every hour.<br>
+                    d) A burglar is someone who break into a house.
+                </div>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer('pq6', this, true)">a, c</button>
+                    <button class="option-btn" onclick="checkAnswer('pq6', this, false)">a, b</button>
+                    <button class="option-btn" onclick="checkAnswer('pq6', this, false)">b, d</button>
+                    <button class="option-btn" onclick="checkAnswer('pq6', this, false)">c, d</button>
+                </div>
+                <div class="explanation correct-exp">정답! <strong>a)</strong> "A movie star"(단수) + that is ✓ / <strong>c)</strong> "The bus"(단수) + which goes ✓<br><br><strong>b)</strong> "The children"(복수)인데 was(단수) 사용 → were가 맞음<br><strong>d)</strong> "someone"(단수)인데 break(원형) 사용 → breaks가 맞음</div>
+                <div class="explanation wrong-exp">오답! 핵심은 <strong>수 일치</strong>입니다.<br>b) children(복수) → who <strong>were</strong> eating (was ✗)<br>d) someone(단수) → who <strong>breaks</strong> into (break ✗)<br>a와 c만 올바릅니다.</div>
+            </div>
+
+        </div>
+
+        <!-- 연습 결과 -->
+        <div class="card" id="practice-result" style="display:none;">
+            <h2>연습 결과</h2>
+            <div id="practice-score" style="text-align:center; padding:16px 0;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 탭 전환
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // 퀴즈 이미지 페이지 전환
+    function switchPage(num) {
+        document.getElementById('quiz-page-1').style.display = num === 1 ? 'block' : 'none';
+        document.getElementById('quiz-page-2').style.display = num === 2 ? 'block' : 'none';
+        document.querySelectorAll('.page-tab').forEach(function(t, i) {
+            t.classList.toggle('active', i === num - 1);
+        });
+    }
+
+    // 연습 문제 채점
+    var practiceAnswered = 0;
+    var practiceCorrect = 0;
+    var totalQuestions = 6;
+
+    function checkAnswer(qId, btn, isCorrect) {
+        var q = document.getElementById(qId);
+        if (q.dataset.answered) return;
+        q.dataset.answered = 'true';
+
+        var buttons = q.querySelectorAll('.option-btn');
+        buttons.forEach(function(b) { b.style.pointerEvents = 'none'; });
+
+        practiceAnswered++;
+
+        if (isCorrect) {
+            practiceCorrect++;
+            btn.classList.add('selected-correct');
+            q.querySelector('.explanation.correct-exp').classList.add('show');
+        } else {
+            btn.classList.add('selected-wrong');
+            q.querySelector('.explanation.wrong-exp').classList.add('show');
+            // 정답 버튼 표시
+            buttons.forEach(function(b) {
+                if (b.onclick.toString().indexOf('true') > -1) {
+                    b.classList.add('show-correct');
+                }
+            });
+        }
+
+        // 모든 문제를 풀었으면 결과 표시
+        if (practiceAnswered === totalQuestions) {
+            var resultDiv = document.getElementById('practice-result');
+            resultDiv.style.display = 'block';
+            var pct = Math.round((practiceCorrect / totalQuestions) * 100);
+            var color = pct >= 80 ? '#16a34a' : pct >= 60 ? '#d97706' : '#dc2626';
+            var msg = pct >= 80 ? '훌륭합니다! 개념을 잘 이해하고 있어요!' :
+                      pct >= 60 ? '좋아요! 조금만 더 연습하면 완벽해질 거예요.' :
+                      '개념 정리 탭을 다시 확인하고 복습해 보세요.';
+            document.getElementById('practice-score').innerHTML =
+                '<div style="font-size:2.5rem;font-weight:800;color:' + color + ';">' + practiceCorrect + ' / ' + totalQuestions + '</div>' +
+                '<div style="font-size:1.1rem;color:#475569;margin-top:8px;">' + msg + '</div>' +
+                '<div style="margin-top:12px;"><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + pct + '%;background:' + color + ';"></div></div></div>';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+
+</body>
+</html>
